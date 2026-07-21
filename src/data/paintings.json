@@ -1,0 +1,642 @@
+[
+  {
+    "id": "vermeer-girl-pearl",
+    "title": "Girl with a Pearl Earring",
+    "artist": "Johannes Vermeer",
+    "year": 1665,
+    "date": "c. 1665",
+    "era": "Dutch Golden Age",
+    "museum": "Mauritshuis",
+    "source": "Mauritshuis — Public Domain",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Mauritshuis, The Hague",
+    "objectUrl": "https://www.mauritshuis.nl/en/our-collection/artworks/670-girl-with-a-pearl-earring/",
+    "image": "paintings/1665_Girl_with_a_Pearl_Earring.jpg",
+    "coords": null,
+    "fact": "Her turban blue is natural ultramarine — ground from lapis lazuli, once more costly than gold.",
+    "palette": [
+      {
+        "hex": "#251e12",
+        "lab": [
+          11.73,
+          1.17,
+          9.27
+        ],
+        "weight": 0.5704,
+        "x": 0.42,
+        "y": 0.443
+      },
+      {
+        "hex": "#a48e6c",
+        "lab": [
+          60.18,
+          3.1,
+          21.19
+        ],
+        "weight": 0.1293,
+        "x": 0.545,
+        "y": 0.641
+      },
+      {
+        "hex": "#635a49",
+        "lab": [
+          38.63,
+          0.6,
+          11.16
+        ],
+        "weight": 0.1155,
+        "x": 0.65,
+        "y": 0.598
+      },
+      {
+        "hex": "#3c3b32",
+        "lab": [
+          24.7,
+          -1.46,
+          5.74
+        ],
+        "weight": 0.1041,
+        "x": 0.659,
+        "y": 0.58
+      },
+      {
+        "hex": "#cfc0ae",
+        "lab": [
+          78.47,
+          2.3,
+          10.98
+        ],
+        "weight": 0.0807,
+        "x": 0.549,
+        "y": 0.412
+      }
+    ]
+  },
+  {
+    "id": "met-45434",
+    "title": "Under the Wave off Kanagawa (Kanagawa oki nami ura), also known as The Great Wave, from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)",
+    "artist": "Katsushika Hokusai",
+    "year": 1820,
+    "date": "ca. 1830–32",
+    "era": "Edo / ukiyo-e",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/45434",
+    "image": "paintings/45434.jpg",
+    "coords": null,
+    "fact": "From “Thirty-six Views of Mount Fuji.” The tiny peak sits calmly beneath the wave’s reaching claw.",
+    "palette": [
+      {
+        "hex": "#f0eedc",
+        "lab": [
+          93.87,
+          -2.37,
+          9.17
+        ],
+        "weight": 0.449
+      },
+      {
+        "hex": "#efdebb",
+        "lab": [
+          88.95,
+          0.34,
+          18.98
+        ],
+        "weight": 0.2667
+      },
+      {
+        "hex": "#1c3357",
+        "lab": [
+          21.02,
+          4.2,
+          -24.44
+        ],
+        "weight": 0.1132
+      },
+      {
+        "hex": "#3b5d7b",
+        "lab": [
+          38.18,
+          -3.33,
+          -20.51
+        ],
+        "weight": 0.092
+      },
+      {
+        "hex": "#909591",
+        "lab": [
+          61.09,
+          -2.34,
+          1.17
+        ],
+        "weight": 0.0792
+      }
+    ]
+  },
+  {
+    "id": "met-436535",
+    "title": "Wheat Field with Cypresses",
+    "artist": "Vincent van Gogh",
+    "year": 1889,
+    "date": "1889",
+    "era": "Post-Impressionism",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Purchase, The Annenberg Foundation Gift, 1993",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/436535",
+    "image": "paintings/436535.jpg",
+    "coords": null,
+    "fact": "Painted from the garden of the asylum at Saint-Rémy; the cypresses “occupied his thoughts” like obelisks.",
+    "palette": [
+      {
+        "hex": "#a0a99a",
+        "lab": [
+          68.05,
+          -5.63,
+          6.29
+        ],
+        "weight": 0.2829
+      },
+      {
+        "hex": "#6c8696",
+        "lab": [
+          54.42,
+          -5.21,
+          -11.54
+        ],
+        "weight": 0.2082
+      },
+      {
+        "hex": "#927a38",
+        "lab": [
+          52.21,
+          0.97,
+          39.14
+        ],
+        "weight": 0.1713
+      },
+      {
+        "hex": "#4d5e3f",
+        "lab": [
+          37.68,
+          -12.69,
+          15.45
+        ],
+        "weight": 0.1702
+      },
+      {
+        "hex": "#0f1213",
+        "lab": [
+          5.38,
+          -0.82,
+          -1.08
+        ],
+        "weight": 0.1675
+      }
+    ]
+  },
+  {
+    "id": "met-437881",
+    "title": "Young Woman with a Water Pitcher",
+    "artist": "Johannes Vermeer",
+    "year": 1657,
+    "date": "ca. 1662",
+    "era": "Dutch Golden Age",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Marquand Collection, Gift of Henry G. Marquand, 1889",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/437881",
+    "image": "paintings/437881.jpg",
+    "coords": null,
+    "fact": "Pure morning light on a wall — one of the first Vermeers ever to reach an American collection.",
+    "palette": [
+      {
+        "hex": "#827c6d",
+        "lab": [
+          52.18,
+          -0.4,
+          9.1
+        ],
+        "weight": 0.3113
+      },
+      {
+        "hex": "#1c1d24",
+        "lab": [
+          10.94,
+          1.56,
+          -4.63
+        ],
+        "weight": 0.2403
+      },
+      {
+        "hex": "#3f382a",
+        "lab": [
+          23.7,
+          0.8,
+          9.87
+        ],
+        "weight": 0.2113
+      },
+      {
+        "hex": "#614931",
+        "lab": [
+          33.06,
+          6.29,
+          18.21
+        ],
+        "weight": 0.1281
+      },
+      {
+        "hex": "#4f5859",
+        "lab": [
+          36.59,
+          -2.98,
+          -1.71
+        ],
+        "weight": 0.1089
+      }
+    ]
+  },
+  {
+    "id": "met-438821",
+    "title": "Ia Orana Maria (Hail Mary)",
+    "artist": "Paul Gauguin",
+    "year": 1891,
+    "date": "1891",
+    "era": "Post-Impressionism",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Bequest of Sam A. Lewisohn, 1951",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/438821",
+    "image": "paintings/438821.jpg",
+    "coords": null,
+    "fact": "A Tahitian retelling of the Annunciation, painted during Gauguin’s very first year on the island.",
+    "palette": [
+      {
+        "hex": "#485a4b",
+        "lab": [
+          36.42,
+          -10.57,
+          6.27
+        ],
+        "weight": 0.3408
+      },
+      {
+        "hex": "#83857c",
+        "lab": [
+          55.05,
+          -2.3,
+          4.44
+        ],
+        "weight": 0.318
+      },
+      {
+        "hex": "#a69258",
+        "lab": [
+          61.04,
+          -0.52,
+          33.48
+        ],
+        "weight": 0.2057
+      },
+      {
+        "hex": "#9f5d3d",
+        "lab": [
+          46.19,
+          23.93,
+          29.37
+        ],
+        "weight": 0.086
+      },
+      {
+        "hex": "#182223",
+        "lab": [
+          12.43,
+          -3.91,
+          -2.27
+        ],
+        "weight": 0.0494
+      }
+    ]
+  },
+  {
+    "id": "met-435809",
+    "title": "The Harvesters",
+    "artist": "Pieter Bruegel the Elder",
+    "year": 1565,
+    "date": "1565",
+    "era": "Northern Renaissance",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Rogers Fund, 1919",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/435809",
+    "image": "paintings/435809.jpg",
+    "coords": null,
+    "fact": "Part of Bruegel’s cycle of the seasons (1565) — a founding work of Western landscape painting.",
+    "palette": [
+      {
+        "hex": "#b48140",
+        "lab": [
+          57.95,
+          12.7,
+          42.41
+        ],
+        "weight": 0.2635
+      },
+      {
+        "hex": "#c4b4a1",
+        "lab": [
+          74.14,
+          2.55,
+          11.97
+        ],
+        "weight": 0.2395
+      },
+      {
+        "hex": "#291e11",
+        "lab": [
+          12.11,
+          3.3,
+          10.27
+        ],
+        "weight": 0.1881
+      },
+      {
+        "hex": "#675c44",
+        "lab": [
+          39.38,
+          0.52,
+          14.99
+        ],
+        "weight": 0.1579
+      },
+      {
+        "hex": "#7b4818",
+        "lab": [
+          35.71,
+          17.58,
+          36.19
+        ],
+        "weight": 0.1511
+      }
+    ]
+  },
+  {
+    "id": "met-435882",
+    "title": "Still Life with Apples and a Pot of Primroses",
+    "artist": "Paul Cézanne",
+    "year": 1885,
+    "date": "ca. 1890",
+    "era": "Post-Impressionism",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Bequest of Sam A. Lewisohn, 1951",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/435882",
+    "image": "paintings/435882.jpg",
+    "coords": null,
+    "fact": "“With an apple I will astonish Paris,” Cézanne said. Here are the apples.",
+    "palette": [
+      {
+        "hex": "#5e9292",
+        "lab": [
+          57.07,
+          -17.14,
+          -5.47
+        ],
+        "weight": 0.4062
+      },
+      {
+        "hex": "#1d282d",
+        "lab": [
+          15.26,
+          -2.77,
+          -5.14
+        ],
+        "weight": 0.169
+      },
+      {
+        "hex": "#354f4f",
+        "lab": [
+          31.5,
+          -9.81,
+          -3.23
+        ],
+        "weight": 0.164
+      },
+      {
+        "hex": "#becbc4",
+        "lab": [
+          80.46,
+          -5.71,
+          2.1
+        ],
+        "weight": 0.1608
+      },
+      {
+        "hex": "#886030",
+        "lab": [
+          43.85,
+          11.09,
+          33.14
+        ],
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "met-438816",
+    "title": "The Forest in Winter at Sunset",
+    "artist": "Théodore Rousseau",
+    "year": 1846,
+    "date": "ca. 1846–67",
+    "era": "Romanticism / Barbizon",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Gift of P. A. B. Widener, 1911",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/438816",
+    "image": "paintings/438816.jpg",
+    "coords": null,
+    "fact": "A vast canvas Rousseau reworked for two decades — and never considered finished.",
+    "palette": [
+      {
+        "hex": "#281d12",
+        "lab": [
+          11.95,
+          3.3,
+          9.43
+        ],
+        "weight": 0.4808
+      },
+      {
+        "hex": "#372414",
+        "lab": [
+          16.24,
+          6.31,
+          14.67
+        ],
+        "weight": 0.2478
+      },
+      {
+        "hex": "#4f3417",
+        "lab": [
+          24.32,
+          8.8,
+          23.01
+        ],
+        "weight": 0.1192
+      },
+      {
+        "hex": "#020101",
+        "lab": [
+          0.43,
+          0.25,
+          0.14
+        ],
+        "weight": 0.0804
+      },
+      {
+        "hex": "#705022",
+        "lab": [
+          36.63,
+          7.81,
+          31.67
+        ],
+        "weight": 0.0718
+      }
+    ]
+  },
+  {
+    "id": "met-436528",
+    "title": "Irises",
+    "artist": "Vincent van Gogh",
+    "year": 1890,
+    "date": "1890",
+    "era": "Post-Impressionism",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Gift of Adele R. Levy, 1958",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/436528",
+    "image": "paintings/436528.jpg",
+    "coords": null,
+    "fact": "Irises from the last year of Van Gogh’s life, painted in the garden at Saint-Rémy.",
+    "palette": [
+      {
+        "hex": "#ddd7d0",
+        "lab": [
+          86.17,
+          0.87,
+          4.02
+        ],
+        "weight": 0.4154
+      },
+      {
+        "hex": "#79a788",
+        "lab": [
+          64.53,
+          -21.87,
+          11.1
+        ],
+        "weight": 0.1684
+      },
+      {
+        "hex": "#687f90",
+        "lab": [
+          52.09,
+          -4.44,
+          -11.6
+        ],
+        "weight": 0.1555
+      },
+      {
+        "hex": "#bbb6ae",
+        "lab": [
+          74.31,
+          0.31,
+          4.59
+        ],
+        "weight": 0.151
+      },
+      {
+        "hex": "#354558",
+        "lab": [
+          28.69,
+          -0.83,
+          -13.53
+        ],
+        "weight": 0.1097
+      }
+    ]
+  },
+  {
+    "id": "met-437980",
+    "title": "Cypresses",
+    "artist": "Vincent van Gogh",
+    "year": 1889,
+    "date": "1889",
+    "era": "Post-Impressionism",
+    "museum": "The Metropolitan Museum of Art",
+    "source": "The Met — Open Access",
+    "license": "CC0 / Public Domain",
+    "creditLine": "Rogers Fund, 1949",
+    "objectUrl": "https://www.metmuseum.org/art/collection/search/437980",
+    "image": "paintings/437980.jpg",
+    "coords": null,
+    "fact": "“As beautiful of line and proportion as an Egyptian obelisk,” Van Gogh wrote of the cypress.",
+    "palette": [
+      {
+        "hex": "#45522f",
+        "lab": [
+          32.86,
+          -12.06,
+          19.02
+        ],
+        "weight": 0.2371
+      },
+      {
+        "hex": "#bcc3a9",
+        "lab": [
+          77.72,
+          -7.43,
+          12.53
+        ],
+        "weight": 0.2294
+      },
+      {
+        "hex": "#1d231b",
+        "lab": [
+          12.78,
+          -4.81,
+          4.45
+        ],
+        "weight": 0.2104
+      },
+      {
+        "hex": "#69938b",
+        "lab": [
+          57.73,
+          -16.12,
+          -0.38
+        ],
+        "weight": 0.1838
+      },
+      {
+        "hex": "#887d38",
+        "lab": [
+          51.95,
+          -4.71,
+          38.23
+        ],
+        "weight": 0.1393
+      }
+    ]
+  }
+]

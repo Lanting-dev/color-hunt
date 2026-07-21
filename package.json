@@ -1,0 +1,16 @@
+{
+  "name": "color-hunt",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "palettes": "node scripts/build-palettes.mjs"
+  },
+  "devDependencies": {
+    "jpeg-js": "^0.4.4",
+    "vite": "^7.0.6"
+  }
+}

@@ -1,0 +1,465 @@
+/* Color Hunt — Today's Color flow. Design system: dark neutral + Vermeer blue,
+   Fraunces (display) + Hanken Grotesk (body). Matches Figma 187:602 / 559 / 772. */
+
+:root {
+  --canvas: #0e0e10;
+  --surface: #1a1a1d;
+  --ink: #f2f2f0;
+  --muted: #9a9a98;
+  --accent: #5f98c7;
+  --border: #2c2c30;
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  /* card + buttons column — intentionally a touch narrower than the nav */
+  --card-w: min(320px, 86vw);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+#app {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: calc(28px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+}
+
+/* ---------- title ---------- */
+.title { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.title .date { font-size: 13px; font-weight: 500; color: var(--muted); }
+.title h1 {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 30px;
+  color: var(--ink);
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  line-height: 1;
+}
+
+/* ---------- card ---------- */
+.card {
+  position: relative;
+  width: var(--card-w);
+  aspect-ratio: 320 / 437;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #222;
+  cursor: pointer;
+  user-select: none;
+}
+.card .fill,
+.card .art {
+  position: absolute;
+  inset: 0;
+  transition: opacity .55s ease;
+}
+.card .art {
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1);
+  will-change: transform;
+  /* slow push into the detail — the eyedropper diving to the exact spot */
+  transition: opacity .55s ease, transform 2.6s cubic-bezier(.22, .61, .36, 1);
+}
+.card.revealed .fill { opacity: 0; }
+.card.revealed .art { opacity: 1; transform: scale(1.55); }
+
+.pill {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 3;
+  background: var(--surface);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 4px 16px;
+  border-radius: 999px;
+  transition: opacity .35s ease;
+}
+
+.strip {
+  position: absolute;
+  left: 0; bottom: 0;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 0;
+  transition: opacity .4s ease;
+}
+.strip .vals {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+}
+.card.revealed .strip { opacity: 0; pointer-events: none; }
+
+.pin {
+  position: absolute;
+  z-index: 3;
+  width: 24px; height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(0,0,0,.4);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform .4s .2s cubic-bezier(.2,.8,.2,1), opacity .3s .2s;
+}
+.card.revealed .pin { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+/* ---------- CTA ---------- */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--card-w);
+  height: 50px;
+  background: var(--accent);
+  color: #0e0e10;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: filter .15s ease, transform .1s ease;
+}
+.cta:active { transform: translateY(1px); filter: brightness(.95); }
+
+/* ---------- Your Color actions: primary + border-only secondary ---------- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* match the picture (card) width so they line up edge-to-edge */
+  width: var(--card-w);
+}
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: filter .15s ease, transform .1s ease, background .15s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #0e0e10; border: none; }
+.btn-primary:active { filter: brightness(.95); }
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--muted);
+}
+.btn-ghost:active { background: rgba(154, 154, 152, .12); }
+
+/* ---------- collection: calendar view ---------- */
+#app.screen-collection { gap: 16px; justify-content: flex-start; }
+.page-title {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 30px;
+  color: var(--ink);
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  line-height: 1;
+}
+
+/* monthly recap */
+.recap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(320px, 86vw);
+  padding: 8px 0;
+}
+.recap-label { font-size: 11px; font-weight: 400; color: #fff; }
+.recap-stats { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+.stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.stat-top { display: flex; align-items: center; gap: 8px; }
+.stat-top svg { width: 16px; height: 16px; color: var(--accent); }
+.stat-num,
+.stat-lab {
+  font-family: var(--serif);
+  font-weight: 900;
+  color: var(--ink);
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  line-height: 1;
+}
+.stat-num { font-size: 24px; }
+.stat-lab { font-size: 11px; }
+
+/* month navigator */
+.monthnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(350px, 90vw);
+  padding: 4px 16px;
+}
+.monthnav span { font-family: var(--sans); font-size: 16px; color: #fff; }
+.chev { display: flex; background: none; border: none; color: var(--ink); cursor: pointer; padding: 0; }
+.chev svg { width: 24px; height: 24px; }
+.chev.next svg { transform: rotate(180deg); }
+
+/* calendar card */
+.cal-card {
+  width: min(350px, 90vw);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 24px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+}
+.cal-weekdays,
+.cal-grid { display: grid; grid-template-columns: repeat(7, 40px); justify-content: space-between; width: 100%; }
+.cal-grid { row-gap: 16px; }
+.cal-weekdays span { text-align: center; font-family: var(--sans); font-weight: 700; font-size: 16px; color: var(--ink); }
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default;
+}
+.cal-cell.found { cursor: pointer; }
+.cal-cell.found:active { transform: scale(.96); }
+.cal-sq {
+  width: 40px;
+  height: 48px;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+}
+.cal-cell.in .cal-sq,
+.cal-cell.found .cal-sq { background-color: var(--canvas); }
+.cal-cell.out .cal-sq { background-color: transparent; }
+.cal-date {
+  width: 40px;
+  height: 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 11px;
+  color: #fff;
+}
+.cal-cell.out .cal-date { color: var(--muted); }
+
+/* art detail card (day detail — Figma 181:493) */
+.artcard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: var(--card-w);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 16px;
+}
+.art-thumb {
+  width: 64px;
+  height: 74px;
+  flex: 0 0 auto;
+  border-radius: 3px 3px 0 0;
+  background-size: cover;
+  background-position: center;
+}
+.art-info { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.art-cap { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.art-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.art-sub {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.art-more {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 11px;
+  text-decoration: underline;
+  letter-spacing: .3px;
+  cursor: pointer;
+  padding: 0;
+}
+.art-more:active { color: var(--ink); }
+
+/* back button (day detail) */
+.back {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 20px;
+  z-index: 5;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.back:active { color: var(--ink); }
+
+/* ---------- start over (Your Color) ---------- */
+.restart {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  right: 20px;
+  z-index: 5;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.restart:active { color: var(--ink); }
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 8px);
+  z-index: 10;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- bottom nav ---------- */
+.nav {
+  width: min(350px, 90vw);
+  height: 71px;
+  background: var(--surface);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 44px;
+  margin-top: auto;
+}
+.nav .item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 50px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.nav .item.active { color: var(--accent); }
+.nav .item svg { width: 24px; height: 24px; }
+
+/* ---------- match score: the payoff of the hunt ---------- */
+.match {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  margin: -8px 0;            /* pull a touch closer than the 40px column gap */
+}
+.match .num {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--serif);
+  font-weight: 900;
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  color: var(--ink);
+  line-height: 1;
+}
+.match .num span:first-child {
+  font-size: 64px;
+  font-variant-numeric: tabular-nums;
+}
+.match .pct {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--muted);
+}
+.match .caption {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 260px;
+}
+
+/* ---------- your color: gentle intro ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.screen-your .card, .screen-your .title h1 { animation: rise .5s ease both; }
+.screen-your .match { animation: rise .6s .15s ease both; }
+
+/* The score + two action buttons add height. The card keeps the shared column
+   width (matching the nav) but its height is capped so the sections can breathe
+   evenly and still fit 390×844; the photo just crops a little via cover. */
+#app.screen-your { gap: 28px; }
+#app.screen-your .card { aspect-ratio: auto; height: min(346px, 42vh); }
+#app.screen-your .match { gap: 6px; }
+#app.screen-your .match .num span:first-child { font-size: 52px; }
+/* extra breathing room under the score, dropping the buttons lower */
+#app.screen-your .actions { margin-top: 24px; }
