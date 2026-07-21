@@ -719,7 +719,6 @@ body {
   gap: 16px;
   width: var(--profile-w, min(350px, 90vw));
 }
-.profile-google,
 .profile-email-start,
 .profile-email-form button {
   display: flex;
@@ -732,49 +731,6 @@ body {
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-}
-.profile-google {
-  gap: 15px;
-  border: none;
-  background: var(--accent);
-  color: var(--canvas);
-}
-.gmail-icon {
-  position: relative;
-  display: block;
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-}
-.gmail-part {
-  position: absolute;
-  display: block;
-  max-width: none;
-}
-.gmail-part-1 {
-  inset: 31.84% 77.27% 12.5% 0;
-  width: 22.73%;
-  height: 55.66%;
-}
-.gmail-part-2 {
-  inset: 31.84% 0 12.5% 77.27%;
-  width: 22.73%;
-  height: 55.66%;
-}
-.gmail-part-3 {
-  inset: 12.5% 0 51.11% 77.27%;
-  width: 22.73%;
-  height: 36.39%;
-}
-.gmail-part-4 {
-  inset: 19.34% 22.73% 30.66%;
-  width: 54.54%;
-  height: 50%;
-}
-.gmail-part-5 {
-  inset: 12.48% 77.27% 51.11% 0;
-  width: 22.73%;
-  height: 36.41%;
 }
 .profile-email-form {
   display: flex;
@@ -811,7 +767,6 @@ body {
   width: 24px;
   height: 24px;
 }
-.profile-google:disabled,
 .profile-email-start:disabled,
 .profile-email-form input:disabled,
 .profile-email-form button:disabled {

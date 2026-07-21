@@ -11,7 +11,6 @@ import {
   getSession,
   onAuthChange,
   signInWithEmail,
-  signInWithGoogle,
   signOut,
   syncEntries,
 } from './auth.js';
@@ -103,15 +102,6 @@ function icon(name) {
     mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/>',
   }[name];
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-}
-function gmailIcon() {
-  return `<span class="gmail-icon" aria-hidden="true">
-    <img class="gmail-part gmail-part-1" src="/figma/gmail-part-1.svg" alt="">
-    <img class="gmail-part gmail-part-2" src="/figma/gmail-part-2.svg" alt="">
-    <img class="gmail-part gmail-part-3" src="/figma/gmail-part-3.svg" alt="">
-    <img class="gmail-part gmail-part-4" src="/figma/gmail-part-4.svg" alt="">
-    <img class="gmail-part gmail-part-5" src="/figma/gmail-part-5.svg" alt="">
-  </span>`;
 }
 function nav(active = 'home') {
   const item = (tab, label, ic) =>
@@ -387,18 +377,17 @@ function renderProfileSignedOut(entries, message) {
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
     <section class="profile-card profile-note">
-      <h2>Already found colors?</h2>
-      <p>Your current finds on this device will be saved after you sign in.</p>
+      <h2>Already have colors?</h2>
+      <p>Sign in to save this device's finds and keep them synced.</p>
     </section>
     <section class="profile-card profile-save">
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
-        <h2>Save your collection</h2>
-        <p>Sign in so the colors you find stay with you across devices.</p>
+        <h2>Save or continue</h2>
+        <p>Use email to sign in or create your profile.</p>
       </div>
     </section>
     <section class="profile-auth-actions">
-      <button class="profile-google" id="googleSignIn">${gmailIcon()}Continue with Google</button>
       <button class="profile-email-start" id="emailStart">${icon('mail')}Continue with email</button>
       <form class="profile-email-form" id="emailForm" hidden>
         <label class="sr-only" for="profileEmail">Email</label>
@@ -410,17 +399,6 @@ function renderProfileSignedOut(entries, message) {
     ${nav('profile')}
   `;
 
-  app.querySelector('#googleSignIn').addEventListener('click', async () => {
-    try {
-      if (!authConfigured) {
-        app.querySelector('#authMessage').textContent = message;
-        return;
-      }
-      await signInWithGoogle();
-    } catch (err) {
-      app.querySelector('#authMessage').textContent = err.message || 'Could not start Google sign in.';
-    }
-  });
   app.querySelector('#emailStart').addEventListener('click', () => {
     if (!authConfigured) {
       app.querySelector('#authMessage').textContent = message;
