@@ -178,7 +178,12 @@ body {
 
 /* ---------- collection: calendar view ---------- */
 #app.screen-collection { gap: 16px; justify-content: flex-start; }
-#app.screen-profile { gap: 46px; justify-content: flex-start; }
+#app.screen-profile {
+  --profile-w: min(350px, calc(100vw - 40px));
+  gap: 46px;
+  justify-content: flex-start;
+  padding: calc(52px + env(safe-area-inset-top)) 20px calc(23px + env(safe-area-inset-bottom));
+}
 .page-title {
   font-family: var(--serif);
   font-weight: 900;
@@ -192,6 +197,7 @@ body {
 #app.screen-profile .page-title {
   font-size: 34px;
   line-height: 38px;
+  width: var(--profile-w);
 }
 
 .view-switcher {
@@ -488,17 +494,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 30px;
+  padding: 10px 30px 13px;
   margin-top: auto;
 }
 .nav .item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   width: 78px;
   font-size: 11px;
   font-weight: 500;
+  line-height: 14px;
   color: var(--muted);
   background: none;
   border: none;
@@ -516,7 +523,7 @@ body {
   border: 1px solid var(--border);
 }
 .profile-card {
-  width: min(350px, 90vw);
+  width: var(--profile-w, min(350px, 90vw));
   border-radius: 20px;
   padding: 24px 16px;
 }
@@ -530,9 +537,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: min(350px, 90vw);
+  width: var(--profile-w, min(350px, 90vw));
+  min-height: 126px;
   border-radius: 20px;
   padding: 24px 16px;
+  overflow: hidden;
 }
 .profile-avatar,
 .profile-main-swatch {
@@ -583,7 +592,7 @@ body {
 .profile-stats {
   display: flex;
   justify-content: space-between;
-  width: min(350px, 90vw);
+  width: var(--profile-w, min(350px, 90vw));
 }
 .profile-stat {
   display: flex;
@@ -591,8 +600,9 @@ body {
   align-items: center;
   gap: 8px;
   width: 105px;
+  min-height: 103px;
   border-radius: 18px;
-  padding: 24px 12px;
+  padding: 24px 16px;
   overflow: hidden;
   text-align: center;
 }
@@ -653,7 +663,7 @@ body {
 }
 .profile-mini-swatches span:first-child { margin-left: 0; }
 .profile-signout {
-  width: min(350px, 90vw);
+  width: var(--profile-w, min(350px, 90vw));
   height: 50px;
   border: 1px solid var(--muted);
   border-radius: 999px;
@@ -668,6 +678,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 116px;
 }
 .profile-save {
   display: flex;
@@ -675,10 +686,18 @@ body {
   align-items: center;
   gap: 24px;
   text-align: center;
+  min-height: 238px;
 }
 .profile-main-swatch {
   width: 86px;
   height: 86px;
+}
+.profile-save-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 .profile-save h2 {
   width: 100%;
@@ -698,7 +717,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: min(350px, 90vw);
+  width: var(--profile-w, min(350px, 90vw));
 }
 .profile-google,
 .profile-email-start,
@@ -720,9 +739,42 @@ body {
   background: var(--accent);
   color: var(--canvas);
 }
-.profile-google span {
-  font-weight: 900;
-  color: #ea4335;
+.gmail-icon {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+}
+.gmail-part {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+.gmail-part-1 {
+  inset: 31.84% 77.27% 12.5% 0;
+  width: 22.73%;
+  height: 55.66%;
+}
+.gmail-part-2 {
+  inset: 31.84% 0 12.5% 77.27%;
+  width: 22.73%;
+  height: 55.66%;
+}
+.gmail-part-3 {
+  inset: 12.5% 0 51.11% 77.27%;
+  width: 22.73%;
+  height: 36.39%;
+}
+.gmail-part-4 {
+  inset: 19.34% 22.73% 30.66%;
+  width: 54.54%;
+  height: 50%;
+}
+.gmail-part-5 {
+  inset: 12.48% 77.27% 51.11% 0;
+  width: 22.73%;
+  height: 36.41%;
 }
 .profile-email-form {
   display: flex;
@@ -774,6 +826,7 @@ body {
   line-height: 17px;
   text-align: center;
 }
+.profile-auth-message:empty { display: none; }
 .sr-only {
   position: absolute;
   width: 1px;

@@ -104,6 +104,15 @@ function icon(name) {
   }[name];
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 }
+function gmailIcon() {
+  return `<span class="gmail-icon" aria-hidden="true">
+    <img class="gmail-part gmail-part-1" src="/figma/gmail-part-1.svg" alt="">
+    <img class="gmail-part gmail-part-2" src="/figma/gmail-part-2.svg" alt="">
+    <img class="gmail-part gmail-part-3" src="/figma/gmail-part-3.svg" alt="">
+    <img class="gmail-part gmail-part-4" src="/figma/gmail-part-4.svg" alt="">
+    <img class="gmail-part gmail-part-5" src="/figma/gmail-part-5.svg" alt="">
+  </span>`;
+}
 function nav(active = 'home') {
   const item = (tab, label, ic) =>
     `<button class="item${tab === active ? ' active' : ''}" data-tab="${tab}"><span>${icon(ic)}</span>${label}</button>`;
@@ -331,6 +340,7 @@ async function renderProfile() {
 function renderProfileSignedIn(user, entries, stats, syncMessage) {
   const recent = entries.slice(0, 4);
   const swatches = recent.length ? recent.map((entry) => entry.colorHex) : [todayColor.hex, '#5f98c7', '#af7648', '#7e8f6b'];
+  const storage = syncMessage.toLowerCase().includes('needs') ? 'needs setup' : 'synced';
   app.className = 'screen-profile';
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
@@ -356,7 +366,7 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
       </div>
       <p>First find: ${esc(stats.firstDate)}</p>
       <p>Last saved: ${entries[0]?.ts ? 'today' : 'Not yet'}</p>
-      <p>Storage: ${authConfigured ? 'synced' : 'local only'}</p>
+      <p>Storage: ${storage}</p>
     </section>
     <button class="profile-signout" id="signOut">Sign out</button>
     ${nav('profile')}
@@ -382,30 +392,40 @@ function renderProfileSignedOut(entries, message) {
     </section>
     <section class="profile-card profile-save">
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
-      <h2>Save your collection</h2>
-      <p>Sign in so the colors you find stay with you across devices.</p>
+      <div class="profile-save-copy">
+        <h2>Save your collection</h2>
+        <p>Sign in so the colors you find stay with you across devices.</p>
+      </div>
     </section>
     <section class="profile-auth-actions">
-      <button class="profile-google" id="googleSignIn" ${authConfigured ? '' : 'disabled'}><span>G</span>Continue with Google</button>
-      <button class="profile-email-start" id="emailStart" ${authConfigured ? '' : 'disabled'}>${icon('mail')}Continue with email</button>
+      <button class="profile-google" id="googleSignIn">${gmailIcon()}Continue with Google</button>
+      <button class="profile-email-start" id="emailStart">${icon('mail')}Continue with email</button>
       <form class="profile-email-form" id="emailForm" hidden>
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
         <button type="submit">Send sign in link</button>
       </form>
-      <p class="profile-auth-message" id="authMessage">${authConfigured ? (entries.length ? `${entries.length} local finds will be saved after sign in.` : '') : esc(message)}</p>
+      <p class="profile-auth-message" id="authMessage">${authConfigured && entries.length ? `${entries.length} local finds will be saved after sign in.` : ''}</p>
     </section>
     ${nav('profile')}
   `;
 
   app.querySelector('#googleSignIn').addEventListener('click', async () => {
     try {
+      if (!authConfigured) {
+        app.querySelector('#authMessage').textContent = message;
+        return;
+      }
       await signInWithGoogle();
     } catch (err) {
       app.querySelector('#authMessage').textContent = err.message || 'Could not start Google sign in.';
     }
   });
   app.querySelector('#emailStart').addEventListener('click', () => {
+    if (!authConfigured) {
+      app.querySelector('#authMessage').textContent = message;
+      return;
+    }
     const form = app.querySelector('#emailForm');
     form.hidden = false;
     app.querySelector('#profileEmail').focus();
