@@ -54,11 +54,11 @@ const baseAnalyticsProps = {
 // feel like a simple response, not a grade or a mysterious feature.
 function vibeCaption(score) {
   if (score >= 90) return `You found the color ${artistLast} was chasing.`;
-  if (score >= 75) return "Nice find. This photo caught today's color.";
-  if (score >= 60) return "Good eye. Today's color is in there.";
-  if (score >= 40) return "A softer echo of today's color.";
-  if (score >= 20) return "A different take, but it still belongs here.";
-  return 'A different mood. Saved to your collection.';
+  if (score >= 75) return "Found it. This photo caught today's color.";
+  if (score >= 60) return "Close. Today's color is just peeking through.";
+  if (score >= 40) return "There is a little of today's color in here.";
+  if (score >= 20) return "Mostly a different color mood today.";
+  return "I'm not seeing today's color here, but it is saved.";
 }
 
 // ---- tiny helpers -----------------------------------------------------------
