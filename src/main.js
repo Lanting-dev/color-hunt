@@ -50,15 +50,15 @@ const baseAnalyticsProps = {
   color_hex: todayColor.hex,
 };
 
-// Warm, never-punishing vibe copy. The numeric score stays internal; the UI
-// should feel like a gentle read, not a grade.
+// Warm, never-punishing copy. The numeric score stays internal; the UI should
+// feel like a simple response, not a grade or a mysterious feature.
 function vibeCaption(score) {
-  if (score >= 90) return `This has the same light ${artistLast} was chasing.`;
-  if (score >= 75) return "That's the color, caught in the wild.";
-  if (score >= 60) return 'A clear echo. The vibe is there.';
-  if (score >= 40) return 'A softer rhyme with today.';
-  if (score >= 20) return "Not exact, but it's speaking the same language.";
-  return 'A different mood, still worth keeping.';
+  if (score >= 90) return `You found the color ${artistLast} was chasing.`;
+  if (score >= 75) return "Nice find — this photo caught today's color.";
+  if (score >= 60) return "Good eye — today's color is in there.";
+  if (score >= 40) return "A softer echo of today's color.";
+  if (score >= 20) return "A different take, but it still belongs here.";
+  return 'A different mood — saved to your collection.';
 }
 
 // ---- tiny helpers -----------------------------------------------------------
@@ -203,7 +203,6 @@ function renderYour(photoUrl, score = null) {
     </div>
     ${hasScore ? `
     <div class="vibe">
-      <div class="vibe-kicker">Color read</div>
       <div class="vibe-copy">${vibeCaption(score)}</div>
     </div>` : ''}
     <button class="restart" id="restart">↺ Start over</button>
@@ -475,7 +474,6 @@ function renderDayDetail(entry) {
     </div>
     ${Number.isFinite(entry.score) ? `
     <div class="vibe">
-      <div class="vibe-kicker">Color read</div>
       <div class="vibe-copy">${vibeCaption(entry.score)}</div>
     </div>` : ''}
     ${artCard(p)}
