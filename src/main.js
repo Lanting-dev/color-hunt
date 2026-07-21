@@ -242,6 +242,7 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 let calView = null; // { year, month } currently shown; null → today's month
+let collectionView = 'calendar';
 
 // map an entry list to { 'YYYY-M-D' (UTC) : entry } for fast calendar lookup
 function entriesByDate(entries) {
@@ -275,16 +276,97 @@ function recap(entries, year, month) {
   return { streak, newArt, newColor };
 }
 
-function renderCollection(opts = {}) {
-  track('collection_opened', {
-    year: opts.year ?? calView?.year ?? new Date().getFullYear(),
-    month: opts.month ?? calView?.month ?? new Date().getMonth(),
+function collectionSwitcher(active) {
+  const tab = (view, label) =>
+    `<button class="seg${view === active ? ' active' : ''}" data-view="${view}">${label}</button>`;
+  return `<div class="view-switcher">${tab('calendar', 'Calendar')}${tab('year', 'Year')}</div>`;
+}
+
+function wireCollectionSwitcher() {
+  app.querySelectorAll('.view-switcher .seg').forEach((btn) => {
+    btn.addEventListener('click', () => renderCollection({ view: btn.dataset.view }));
   });
-  app.className = 'screen-collection';
-  app.innerHTML = '';
+}
+
+function yearEntries(entries, year) {
+  const map = {};
+  for (const entry of entries) {
+    const d = dateFromDayNumber(entry.day);
+    if (d.getUTCFullYear() !== year) continue;
+    map[`${d.getUTCMonth()}-${d.getUTCDate()}`] = entry;
+  }
+  return map;
+}
+
+function renderYearCollection(entries, year) {
+  const byDate = yearEntries(entries, year);
+  const count = Object.keys(byDate).length;
+  const today = new Date();
+  const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const cells = [];
+
+  for (let month = 0; month < 12; month++) {
+    const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    const monthCells = [];
+    for (let dom = 1; dom <= 31; dom++) {
+      const exists = dom <= daysInMonth;
+      const entry = exists ? byDate[`${month}-${dom}`] : null;
+      const future = exists && Date.UTC(year, month, dom) > todayUtc;
+      const style = entry ? ` style="background:${entry.colorHex}"` : '';
+      const cls = `year-pixel${entry ? ' found' : ''}${!exists || future ? ' blank' : ''}`;
+      monthCells.push(`<button class="${cls}" data-month="${month}" data-day="${dom}" ${entry ? '' : 'tabindex="-1"'}${style}></button>`);
+    }
+    cells.push(`
+      <div class="year-month">
+        <div class="year-label">${MONTHS[month].slice(0, 3)}</div>
+        <div class="year-stack">${monthCells.join('')}</div>
+      </div>`);
+  }
+
+  const wrap = el(`<div style="display:contents"></div>`);
+  wrap.innerHTML = `
+    <h1 class="page-title">Collection</h1>
+    ${collectionSwitcher('year')}
+    <div class="year-head">
+      <button class="chev" id="prevY" aria-label="Previous year">${icon('chev')}</button>
+      <span>${year} · ${count} colors found</span>
+      <button class="chev next" id="nextY" aria-label="Next year">${icon('chev')}</button>
+    </div>
+    <div class="year-card">
+      <div class="year-grid">${cells.join('')}</div>
+    </div>
+    ${nav('collection')}
+  `;
+  app.append(...wrap.childNodes);
+  wireCollectionSwitcher();
+  app.querySelector('#prevY').addEventListener('click', () => renderCollection({ view: 'year', year: year - 1 }));
+  app.querySelector('#nextY').addEventListener('click', () => renderCollection({ view: 'year', year: year + 1 }));
+  app.querySelectorAll('.year-pixel.found').forEach((btn) => {
+    const entry = byDate[`${btn.dataset.month}-${btn.dataset.day}`];
+    btn.addEventListener('click', () => renderDayDetail(entry));
+  });
+  wireNav();
+}
+
+function renderCollection(opts = {}) {
+  collectionView = opts.view || collectionView || 'calendar';
   const entries = opts.entries || allEntries().filter((e) => e.photo && e.day != null);
   const now = new Date();
   const year = opts.year ?? calView?.year ?? now.getFullYear();
+
+  track('collection_opened', {
+    view: collectionView,
+    year,
+    month: opts.month ?? calView?.month ?? now.getMonth(),
+  });
+  app.className = 'screen-collection';
+  app.innerHTML = '';
+
+  if (collectionView === 'year') {
+    renderYearCollection(entries, year);
+    return;
+  }
+
   const month = opts.month ?? calView?.month ?? now.getMonth();
   calView = { year, month };
 
@@ -311,6 +393,7 @@ function renderCollection(opts = {}) {
   const wrap = el(`<div style="display:contents"></div>`);
   wrap.innerHTML = `
     <h1 class="page-title">Collection</h1>
+    ${collectionSwitcher('calendar')}
     <div class="recap">
       <div class="recap-label">Monthly Recap</div>
       <div class="recap-stats">
@@ -342,12 +425,13 @@ function renderCollection(opts = {}) {
     ${nav('collection')}
   `;
   app.append(...wrap.childNodes);
+  wireCollectionSwitcher();
 
   app.querySelector('#prevM').addEventListener('click', () => {
-    const m = month - 1; renderCollection({ entries: opts.entries, year: m < 0 ? year - 1 : year, month: (m + 12) % 12 });
+    const m = month - 1; renderCollection({ entries: opts.entries, view: 'calendar', year: m < 0 ? year - 1 : year, month: (m + 12) % 12 });
   });
   app.querySelector('#nextM').addEventListener('click', () => {
-    const m = month + 1; renderCollection({ entries: opts.entries, year: m > 11 ? year + 1 : year, month: m % 12 });
+    const m = month + 1; renderCollection({ entries: opts.entries, view: 'calendar', year: m > 11 ? year + 1 : year, month: m % 12 });
   });
   app.querySelectorAll('.cal-cell.found').forEach((btn) => {
     btn.addEventListener('click', () => renderDayDetail(cells[+btn.dataset.cell].entry));
@@ -526,6 +610,15 @@ function runDemo(mode) {
       { day: 190, photo: '/' + (paintings[1] || paintings[0]).image, colorHex: '#97a9b3', score: 64, paintingId: (paintings[1] || paintings[0]).id },
     ];
     renderCollection({ entries: sample, year: 2026, month: 6 });
+  }
+  if (mode === 'year') {
+    const sample = [
+      { day: 12, photo: '/' + paintings[0].image, colorHex: '#504631', score: 92, paintingId: paintings[0].id },
+      { day: 48, photo: '/' + paintings[1].image, colorHex: '#97a9b3', score: 64, paintingId: paintings[1].id },
+      { day: 101, photo: '/' + paintings[2].image, colorHex: '#af7648', score: 81, paintingId: paintings[2].id },
+      { day: 188, photo: '/' + paintings[3].image, colorHex: '#76a8bf', score: 88, paintingId: paintings[3].id },
+    ];
+    renderCollection({ entries: sample, view: 'year', year: 2026 });
   }
   if (mode === 'day') {
     renderDayDetail({ day: 188, photo: '/' + paintings[0].image, colorHex: '#504631', score: 92, paintingId: paintings[0].id });
