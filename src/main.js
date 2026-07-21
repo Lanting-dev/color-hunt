@@ -3,8 +3,18 @@ import { pickDaily, dateFromDayNumber } from './daily.js';
 import { rgbToLab } from './color/convert.js';
 import { labPixelsFromFile } from './color/extract.js';
 import { scoreColor } from './color/score.js';
-import { getEntry, saveEntry, clearEntry, allEntries } from './state.js';
+import { getEntry, saveEntry, clearEntry, allEntries, mergeEntries } from './state.js';
 import { scoreBucket, track } from './analytics.js';
+import {
+  authConfigured,
+  fetchEntries,
+  getSession,
+  onAuthChange,
+  signInWithEmail,
+  signInWithGoogle,
+  signOut,
+  syncEntries,
+} from './auth.js';
 
 const app = document.getElementById('app');
 
@@ -67,6 +77,15 @@ function el(html) {
   t.innerHTML = html.trim();
   return t.content.firstElementChild;
 }
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[char]));
+}
 function hexToRgb(hex) {
   const n = hex.replace('#', '');
   return { r: parseInt(n.slice(0, 2), 16), g: parseInt(n.slice(2, 4), 16), b: parseInt(n.slice(4, 6), 16) };
@@ -80,6 +99,8 @@ function icon(name) {
     art: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
     palette: '<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
     chev: '<path d="m15 18-6-6 6-6"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/>',
   }[name];
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 }
@@ -101,10 +122,14 @@ function wireNav() {
       const tab = btn.dataset.tab;
       if (tab === 'home') showToday();
       else if (tab === 'collection') renderCollection();
-      else toast('Profile coming soon');
+      else renderProfile();
     });
   });
 }
+
+onAuthChange(() => {
+  if (app.classList.contains('screen-profile')) renderProfile();
+});
 
 // small transient message for not-yet-built tabs
 let toastTimer;
@@ -230,6 +255,175 @@ function showToday() {
   } else {
     renderHome();
   }
+}
+
+function profileStats(entries) {
+  const now = new Date();
+  const thisMonth = entries.filter((entry) => {
+    const d = dateFromDayNumber(entry.day);
+    return d.getUTCFullYear() === now.getFullYear() && d.getUTCMonth() === now.getMonth();
+  }).length;
+  const first = entries.length ? entries.reduce((min, entry) => Math.min(min, entry.day), entries[0].day) : null;
+  return {
+    total: entries.length,
+    thisMonth,
+    paintings: new Set(entries.map((entry) => entry.paintingId)).size,
+    firstDate: first == null
+      ? 'Not yet'
+      : dateFromDayNumber(first).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+  };
+}
+
+function profileStat(label, value) {
+  return `
+    <div class="profile-stat">
+      <div class="profile-stat-value">${esc(value)}</div>
+      <div class="profile-stat-label">${esc(label)}</div>
+    </div>`;
+}
+
+function renderProfileSkeleton() {
+  app.className = 'screen-profile';
+  app.innerHTML = `
+    <h1 class="page-title">Profile</h1>
+    <div class="profile-card profile-loading">Loading profile...</div>
+    ${nav('profile')}
+  `;
+  wireNav();
+}
+
+async function renderProfile() {
+  renderProfileSkeleton();
+  let entries = allEntries().filter((entry) => entry.photo && entry.day != null);
+
+  let session = null;
+  let syncMessage = authConfigured
+    ? 'Sign in to save across devices.'
+    : 'Set up Supabase to enable email sign in.';
+  try {
+    session = await getSession();
+    if (session?.user) {
+      try {
+        const cloudEntries = await fetchEntries();
+        if (cloudEntries.length) {
+          mergeEntries(cloudEntries);
+          entries = allEntries().filter((entry) => entry.photo && entry.day != null);
+        }
+        const result = await syncEntries(entries);
+        syncMessage = result.count > 0
+          ? 'Your colors are saved across devices.'
+          : 'Your collection is ready to sync.';
+      } catch (err) {
+        console.warn('Sync failed.', err);
+        syncMessage = 'Signed in. Sync needs the color_entries table.';
+      }
+    }
+  } catch (err) {
+    console.warn('Could not load session.', err);
+    syncMessage = 'Could not check sign in status.';
+  }
+
+  const stats = profileStats(entries);
+  if (session?.user) renderProfileSignedIn(session.user, entries, stats, syncMessage);
+  else renderProfileSignedOut(entries, syncMessage);
+}
+
+function renderProfileSignedIn(user, entries, stats, syncMessage) {
+  const recent = entries.slice(0, 4);
+  const swatches = recent.length ? recent.map((entry) => entry.colorHex) : [todayColor.hex, '#5f98c7', '#af7648', '#7e8f6b'];
+  app.className = 'screen-profile';
+  app.innerHTML = `
+    <h1 class="page-title">Profile</h1>
+    <section class="profile-account">
+      <div class="profile-avatar" style="background:${esc(recent[0]?.colorHex || todayColor.hex)}"></div>
+      <div class="profile-account-copy">
+        <div class="profile-label">Signed in</div>
+        <div class="profile-email">${esc(user.email || 'Signed in')}</div>
+        <div class="profile-sync">${icon('check')}<span>${esc(syncMessage)}</span></div>
+      </div>
+    </section>
+    <section class="profile-stats">
+      ${profileStat('colors found', stats.total)}
+      ${profileStat('this month', stats.thisMonth)}
+      ${profileStat('paintings', stats.paintings)}
+    </section>
+    <section class="profile-card profile-memory">
+      <div class="profile-memory-head">
+        <h2>Collection memory</h2>
+        <div class="profile-mini-swatches">
+          ${swatches.slice(0, 4).map((color) => `<span style="background:${esc(color)}"></span>`).join('')}
+        </div>
+      </div>
+      <p>First find: ${esc(stats.firstDate)}</p>
+      <p>Last saved: ${entries[0]?.ts ? 'today' : 'Not yet'}</p>
+      <p>Storage: ${authConfigured ? 'synced' : 'local only'}</p>
+    </section>
+    <button class="profile-signout" id="signOut">Sign out</button>
+    ${nav('profile')}
+  `;
+  app.querySelector('#signOut').addEventListener('click', async () => {
+    try {
+      await signOut();
+      renderProfile();
+    } catch (err) {
+      toast(err.message || 'Could not sign out.');
+    }
+  });
+  wireNav();
+}
+
+function renderProfileSignedOut(entries, message) {
+  app.className = 'screen-profile';
+  app.innerHTML = `
+    <h1 class="page-title">Profile</h1>
+    <section class="profile-card profile-note">
+      <h2>Already found colors?</h2>
+      <p>Your current finds on this device will be saved after you sign in.</p>
+    </section>
+    <section class="profile-card profile-save">
+      <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
+      <h2>Save your collection</h2>
+      <p>Sign in so the colors you find stay with you across devices.</p>
+    </section>
+    <section class="profile-auth-actions">
+      <button class="profile-google" id="googleSignIn" ${authConfigured ? '' : 'disabled'}><span>G</span>Continue with Google</button>
+      <button class="profile-email-start" id="emailStart" ${authConfigured ? '' : 'disabled'}>${icon('mail')}Continue with email</button>
+      <form class="profile-email-form" id="emailForm" hidden>
+        <label class="sr-only" for="profileEmail">Email</label>
+        <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+        <button type="submit">Send sign in link</button>
+      </form>
+      <p class="profile-auth-message" id="authMessage">${authConfigured ? (entries.length ? `${entries.length} local finds will be saved after sign in.` : '') : esc(message)}</p>
+    </section>
+    ${nav('profile')}
+  `;
+
+  app.querySelector('#googleSignIn').addEventListener('click', async () => {
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      app.querySelector('#authMessage').textContent = err.message || 'Could not start Google sign in.';
+    }
+  });
+  app.querySelector('#emailStart').addEventListener('click', () => {
+    const form = app.querySelector('#emailForm');
+    form.hidden = false;
+    app.querySelector('#profileEmail').focus();
+  });
+  app.querySelector('#emailForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = app.querySelector('#authMessage');
+    const email = app.querySelector('#profileEmail').value.trim();
+    if (!email) return;
+    message.textContent = 'Sending sign in link...';
+    try {
+      await signInWithEmail(email);
+      message.textContent = 'Check your email for the sign in link.';
+    } catch (err) {
+      message.textContent = err.message || 'Could not send sign in link.';
+    }
+  });
+  wireNav();
 }
 
 // ---- screen: COLLECTION, Calendar view (Figma 209:1133) ----------------------
@@ -509,6 +703,7 @@ async function onPhoto(e) {
     }
     // every find is saved regardless of the score (penalty-free, PRD §5)
     saveEntry(day, { photo: url, colorHex: todayColor.hex, paintingId: active.id, score, ts: Date.now() });
+    syncEntries(allEntries()).catch((err) => console.warn('Background sync failed.', err));
     track('photo_uploaded', baseAnalyticsProps);
     if (Number.isFinite(score)) {
       track('match_scored', { ...baseAnalyticsProps, score_bucket: scoreBucket(score) });
@@ -609,6 +804,15 @@ function runDemo(mode) {
   if (mode === 'day') {
     renderDayDetail({ day: 188, photo: '/' + paintings[0].image, colorHex: '#504631', score: 92, paintingId: paintings[0].id });
   }
+  if (mode === 'profile-in') {
+    const sample = [
+      { day: 188, photo: '/' + paintings[0].image, colorHex: '#354558', score: 92, paintingId: paintings[0].id, ts: Date.now() },
+      { day: 190, photo: '/' + paintings[1].image, colorHex: '#af7648', score: 64, paintingId: paintings[1].id, ts: Date.now() },
+      { day: 191, photo: '/' + paintings[2].image, colorHex: '#7e8f6b', score: 73, paintingId: paintings[2].id, ts: Date.now() },
+    ];
+    renderProfileSignedIn({ email: 'lanting@example.com' }, sample, profileStats(sample), 'Your colors are saved across devices.');
+  }
+  if (mode === 'profile-out') renderProfileSignedOut(allEntries(), authConfigured ? '' : 'Set up Supabase to enable email sign in.');
 }
 
 if (demo) runDemo(demo);

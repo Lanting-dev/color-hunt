@@ -28,6 +28,15 @@ export function saveEntry(day, entry) {
   save(s);
 }
 
+export function mergeEntries(entries) {
+  const s = load();
+  for (const entry of entries) {
+    if (entry?.day == null) continue;
+    s.entries[entry.day] = { ...(s.entries[entry.day] || {}), ...entry };
+  }
+  save(s);
+}
+
 export function clearEntry(day) {
   const s = load();
   delete s.entries[day];

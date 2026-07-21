@@ -178,6 +178,7 @@ body {
 
 /* ---------- collection: calendar view ---------- */
 #app.screen-collection { gap: 16px; justify-content: flex-start; }
+#app.screen-profile { gap: 46px; justify-content: flex-start; }
 .page-title {
   font-family: var(--serif);
   font-weight: 900;
@@ -185,6 +186,12 @@ body {
   color: var(--ink);
   font-variation-settings: 'SOFT' 0, 'WONK' 1;
   line-height: 1;
+  text-align: center;
+  width: min(350px, 90vw);
+}
+#app.screen-profile .page-title {
+  font-size: 34px;
+  line-height: 38px;
 }
 
 .view-switcher {
@@ -481,7 +488,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 44px;
+  padding: 14px 30px;
   margin-top: auto;
 }
 .nav .item {
@@ -489,7 +496,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  width: 50px;
+  width: 78px;
   font-size: 11px;
   font-weight: 500;
   color: var(--muted);
@@ -500,6 +507,284 @@ body {
 }
 .nav .item.active { color: var(--accent); }
 .nav .item svg { width: 24px; height: 24px; }
+
+/* ---------- profile ---------- */
+.profile-card,
+.profile-account,
+.profile-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.profile-card {
+  width: min(350px, 90vw);
+  border-radius: 20px;
+  padding: 24px 16px;
+}
+.profile-loading {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  text-align: center;
+}
+.profile-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(350px, 90vw);
+  border-radius: 20px;
+  padding: 24px 16px;
+}
+.profile-avatar,
+.profile-main-swatch {
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+.profile-avatar {
+  width: 54px;
+  height: 54px;
+}
+.profile-account-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 235px;
+  min-width: 0;
+}
+.profile-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+}
+.profile-email {
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 21px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-sync {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+.profile-sync svg {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+.profile-stats {
+  display: flex;
+  justify-content: space-between;
+  width: min(350px, 90vw);
+}
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 105px;
+  border-radius: 18px;
+  padding: 24px 12px;
+  overflow: hidden;
+  text-align: center;
+}
+.profile-stat-value {
+  width: 100%;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 900;
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  line-height: 30px;
+}
+.profile-stat-label {
+  width: 100%;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+}
+.profile-memory {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.profile-memory-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+.profile-memory h2,
+.profile-note h2,
+.profile-save h2 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+  line-height: 24px;
+}
+.profile-memory p,
+.profile-note p,
+.profile-save p {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+.profile-mini-swatches {
+  display: flex;
+  width: 65px;
+}
+.profile-mini-swatches span {
+  width: 20px;
+  height: 20px;
+  margin-left: -5px;
+  border-radius: 999px;
+}
+.profile-mini-swatches span:first-child { margin-left: 0; }
+.profile-signout {
+  width: min(350px, 90vw);
+  height: 50px;
+  border: 1px solid var(--muted);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.profile-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.profile-save {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+.profile-main-swatch {
+  width: 86px;
+  height: 86px;
+}
+.profile-save h2 {
+  width: 100%;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 31px;
+}
+.profile-save p {
+  max-width: 266px;
+  font-size: 15px;
+  line-height: 21px;
+}
+.profile-config-note {
+  color: var(--accent) !important;
+}
+.profile-auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(350px, 90vw);
+}
+.profile-google,
+.profile-email-start,
+.profile-email-form button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.profile-google {
+  gap: 15px;
+  border: none;
+  background: var(--accent);
+  color: var(--canvas);
+}
+.profile-google span {
+  font-weight: 900;
+  color: #ea4335;
+}
+.profile-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-email-form[hidden] {
+  display: none;
+}
+.profile-email-form input {
+  width: 100%;
+  height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 0 18px;
+  outline: none;
+}
+.profile-email-form input:focus {
+  border-color: var(--accent);
+}
+.profile-email-start,
+.profile-email-form button {
+  gap: 11px;
+  border: 1px solid var(--muted);
+  background: transparent;
+  color: var(--muted);
+}
+.profile-email-start svg,
+.profile-email-form button svg {
+  width: 24px;
+  height: 24px;
+}
+.profile-google:disabled,
+.profile-email-start:disabled,
+.profile-email-form input:disabled,
+.profile-email-form button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.profile-auth-message {
+  min-height: 17px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  text-align: center;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* ---------- response: the payoff without grading ---------- */
 .vibe {
