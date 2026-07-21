@@ -54,11 +54,11 @@ const baseAnalyticsProps = {
 // feel like a simple response, not a grade or a mysterious feature.
 function vibeCaption(score) {
   if (score >= 90) return `You found the color ${artistLast} was chasing.`;
-  if (score >= 75) return "Nice find — this photo caught today's color.";
-  if (score >= 60) return "Good eye — today's color is in there.";
+  if (score >= 75) return "Nice find. This photo caught today's color.";
+  if (score >= 60) return "Good eye. Today's color is in there.";
   if (score >= 40) return "A softer echo of today's color.";
   if (score >= 20) return "A different take, but it still belongs here.";
-  return 'A different mood — saved to your collection.';
+  return 'A different mood. Saved to your collection.';
 }
 
 // ---- tiny helpers -----------------------------------------------------------
@@ -101,7 +101,7 @@ function wireNav() {
       const tab = btn.dataset.tab;
       if (tab === 'home') showToday();
       else if (tab === 'collection') renderCollection();
-      else toast('Profile — coming soon');
+      else toast('Profile coming soon');
     });
   });
 }
@@ -232,7 +232,7 @@ function showToday() {
   }
 }
 
-// ---- screen: COLLECTION — Calendar view (Figma 209:1133) --------------------
+// ---- screen: COLLECTION, Calendar view (Figma 209:1133) ----------------------
 // the daily hunt, accumulated. Empty days recede; found days show the photo with
 // a date pill tinted in that day's color. Never a goal to fill (PRD §6).
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -454,7 +454,7 @@ function artCard(p) {
     </div>`;
 }
 
-// ---- screen: DAY DETAIL (tap a found day) — re-opens that day's Your Color --
+// ---- screen: DAY DETAIL (tap a found day), re-opens that day's Your Color ---
 function renderDayDetail(entry) {
   app.className = 'screen-your';
   app.innerHTML = '';
@@ -485,7 +485,7 @@ function renderDayDetail(entry) {
   if (more) more.addEventListener('click', () => {
     const url = more.closest('.artcard')?.dataset.url;
     if (url) window.open(url, '_blank', 'noopener');
-    else toast('More details — coming soon');
+    else toast('More details coming soon');
   });
   wireNav();
 }
@@ -516,7 +516,7 @@ async function onPhoto(e) {
     renderYour(url, score, true);
   } catch (err) {
     console.error(err);
-    alert('Could not read that image — try another photo.');
+    alert('Could not read that image. Try another photo.');
   }
 }
 
@@ -530,7 +530,7 @@ function makeThumb(bitmap, max = 720) {
   return c.toDataURL('image/jpeg', 0.85);
 }
 
-// Find where today's color is most *concentrated* in the painting — the spot the
+// Find where today's color is most *concentrated* in the painting, the spot the
 // eyedropper would actually land on. Each pixel is weighted by similarity to the
 // target color; a summed-area table then finds the small window with the highest
 // average weight. That's a real patch of the color, not the scattered average.
@@ -580,7 +580,7 @@ function locateColor(onDone) {
 // ---- dev preview: ?demo=chip|source|your (no camera needed) ---------------
 // Synchronous so it renders reliably for headless screenshots. `your` uses the
 // painting image as a stand-in photo and scores its stored palette vs today's
-// color — a real number, no image decode required.
+// color, a real number, no image decode required.
 const demo = new URLSearchParams(location.search).get('demo');
 function runDemo(mode) {
   renderHome();

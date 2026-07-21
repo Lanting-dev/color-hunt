@@ -1,4 +1,4 @@
-// "Painting of the day" — deterministic, same for everyone (Wordle-style).
+// "Painting of the day", deterministic, same for everyone (Wordle-style).
 
 const EPOCH = Date.UTC(2026, 0, 1); // day 0
 

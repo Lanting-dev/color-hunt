@@ -1,4 +1,4 @@
-/* Color Hunt — Today's Color flow. Design system: dark neutral + Vermeer blue,
+/* Color Hunt: Today's Color flow. Design system: dark neutral + Vermeer blue,
    Fraunces (display) + Hanken Grotesk (body). Matches Figma 187:602 / 559 / 772. */
 
 :root {
@@ -10,7 +10,7 @@
   --border: #2c2c30;
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
-  /* card + buttons column — intentionally a touch narrower than the nav */
+  /* card + buttons column, intentionally a touch narrower than the nav */
   --card-w: min(320px, 86vw);
 }
 
@@ -71,7 +71,7 @@ body {
   opacity: 0;
   transform: scale(1);
   will-change: transform;
-  /* slow push into the detail — the eyedropper diving to the exact spot */
+  /* slow push into the detail, the eyedropper diving to the exact spot */
   transition: opacity .55s ease, transform 2.6s cubic-bezier(.22, .61, .36, 1);
 }
 .card.revealed .fill { opacity: 0; }
@@ -364,7 +364,7 @@ body {
 }
 .year-pixel.found:active { transform: scale(.88); }
 
-/* art detail card (day detail — Figma 181:493) */
+/* art detail card (day detail, Figma 181:493) */
 .artcard {
   display: flex;
   align-items: center;
