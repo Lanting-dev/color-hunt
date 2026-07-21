@@ -8,6 +8,14 @@ import { scoreBucket, track } from './analytics.js';
 
 const app = document.getElementById('app');
 
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('Service worker registration failed.', err);
+    });
+  });
+}
+
 // ---- today's painting + today's ONE color -----------------------------------
 const params = new URLSearchParams(location.search);
 // ?date=YYYY-MM-DD time-travels to preview any day's pick (no waiting/clock change)

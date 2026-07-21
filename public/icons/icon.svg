@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Color Hunt">
+  <rect width="512" height="512" rx="112" fill="#0e0e10"/>
+  <circle cx="256" cy="220" r="142" fill="#76a8bf"/>
+  <circle cx="210" cy="184" r="52" fill="#f1d16b"/>
+  <circle cx="302" cy="292" r="72" fill="#b86f4f"/>
+  <path fill="#f6efe6" d="M164 382h184c12.2 0 22 9.8 22 22s-9.8 22-22 22H164c-12.2 0-22-9.8-22-22s9.8-22 22-22z"/>
+</svg>
