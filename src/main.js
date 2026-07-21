@@ -4,6 +4,7 @@ import { rgbToLab } from './color/convert.js';
 import { paletteFromFile } from './color/extract.js';
 import { scoreColor } from './color/score.js';
 import { getEntry, saveEntry, clearEntry, allEntries } from './state.js';
+import { scoreBucket, track } from './analytics.js';
 
 const app = document.getElementById('app');
 
@@ -34,6 +35,12 @@ const dateStr = viewDate.toLocaleDateString('en-US', dateParam
 
 // last name of today's master, for the warmest caption ("…as Vermeer")
 const artistLast = (active.artist || '').trim().split(/\s+/).pop() || 'the master';
+
+const baseAnalyticsProps = {
+  day,
+  painting_id: active.id,
+  color_hex: todayColor.hex,
+};
 
 // Warm, never-punishing copy that scales with the score (PRD §5.5).
 function matchCaption(score) {
@@ -126,6 +133,7 @@ locateColor((res) => { pin = res || { x: 0.5, y: 0.5 }; placePin(); });
 
 // ---- screen: HOME (chip <-> reveal) -----------------------------------------
 function renderHome() {
+  track('hunt_opened', baseAnalyticsProps);
   app.className = 'screen-home';
   app.innerHTML = '';
 
@@ -162,6 +170,7 @@ function renderHome() {
     revealed = !revealed;
     card.classList.toggle('revealed', revealed);
     pill.textContent = revealed ? 'Back to the color' : 'Tap to see its source';
+    if (revealed) track('source_revealed', baseAnalyticsProps);
   });
 
   app.querySelector('#cta').addEventListener('click', () => fileInput.click());
@@ -259,6 +268,10 @@ function recap(entries, year, month) {
 }
 
 function renderCollection(opts = {}) {
+  track('collection_opened', {
+    year: opts.year ?? calView?.year ?? new Date().getFullYear(),
+    month: opts.month ?? calView?.month ?? new Date().getMonth(),
+  });
   app.className = 'screen-collection';
   app.innerHTML = '';
   const entries = opts.entries || allEntries().filter((e) => e.photo && e.day != null);
@@ -418,6 +431,10 @@ async function onPhoto(e) {
     }
     // every find is saved regardless of the score (penalty-free, PRD §5)
     saveEntry(day, { photo: url, colorHex: todayColor.hex, paintingId: active.id, score, ts: Date.now() });
+    track('photo_uploaded', baseAnalyticsProps);
+    if (Number.isFinite(score)) {
+      track('match_scored', { ...baseAnalyticsProps, score_bucket: scoreBucket(score) });
+    }
     renderYour(url, score, true);
   } catch (err) {
     console.error(err);
