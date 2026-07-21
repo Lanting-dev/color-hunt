@@ -179,7 +179,7 @@ body {
 /* ---------- collection: calendar view ---------- */
 #app.screen-collection { gap: 16px; justify-content: flex-start; }
 #app.screen-profile {
-  --profile-w: min(350px, calc(100vw - 40px));
+  --profile-w: min(390px, calc(100vw - 40px));
   gap: 46px;
   justify-content: flex-start;
   padding: calc(52px + env(safe-area-inset-top)) 20px calc(23px + env(safe-area-inset-bottom));
@@ -556,7 +556,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 235px;
+  width: calc(var(--profile-w, min(350px, 90vw)) - 114px);
   min-width: 0;
 }
 .profile-label {
