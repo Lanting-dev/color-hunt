@@ -40,14 +40,15 @@ export function scoreMatch(paletteA, paletteB) {
   };
 }
 
-// "One color a day" scoring (PRD §5.5): the photo's dominant color vs today's
-// single color. Same DECAY curve as the palette version, so it calibrates
-// together. `photoPalette` is the weighted palette from extract.js (sorted by
-// weight desc); `targetLab` is today's color's CIELAB.
-export function scoreColor(photoPalette, targetLab) {
-  const dominant = photoPalette[0];
-  if (!dominant) return { score: SCORE.MIN, distance: Infinity };
-  const distance = ciede2000(dominant.lab, targetLab);
+// "One color a day" scoring (PRD §5.5): did the photo contain today's single
+// color? We score the closest small patch of sampled pixels, not the photo's
+// dominant color, because a hunt can succeed with a found object in the scene.
+export function scoreColor(photoLabs, targetLab) {
+  if (!photoLabs.length) return { score: SCORE.MIN, distance: Infinity };
+  const distances = photoLabs.map((lab) => ciede2000(lab, targetLab)).sort((a, b) => a - b);
+  const sampleCount = Math.min(120, Math.max(16, Math.round(distances.length * 0.01)));
+  const patch = distances.slice(0, sampleCount);
+  const distance = patch.reduce((sum, value) => sum + value, 0) / patch.length;
   const raw = SCORE.MAX * Math.exp(-distance / SCORE.DECAY);
   return {
     score: Math.max(SCORE.MIN, Math.min(SCORE.MAX, Math.round(raw))),

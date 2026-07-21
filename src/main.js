@@ -1,7 +1,7 @@
 import paintings from './data/paintings.json';
 import { pickDaily, dateFromDayNumber } from './daily.js';
 import { rgbToLab } from './color/convert.js';
-import { paletteFromFile } from './color/extract.js';
+import { labPixelsFromFile } from './color/extract.js';
 import { scoreColor } from './color/score.js';
 import { getEntry, saveEntry, clearEntry, allEntries } from './state.js';
 import { scoreBucket, track } from './analytics.js';
@@ -513,11 +513,11 @@ async function onPhoto(e) {
     const bitmap = await createImageBitmap(file);
     const url = makeThumb(bitmap, 720);
     bitmap.close?.();
-    // score the photo's dominant color against today's ONE color (LAB distance)
+    // score the closest found patch against today's ONE color (LAB distance)
     let score = null;
     try {
-      const palette = await paletteFromFile(file, 5);
-      score = scoreColor(palette, todayColor.lab).score;
+      const photoLabs = await labPixelsFromFile(file);
+      score = scoreColor(photoLabs, todayColor.lab).score;
     } catch (err) {
       console.warn('Scoring failed; saving the find anyway.', err);
     }
@@ -600,7 +600,7 @@ function runDemo(mode) {
   renderHome();
   if (mode === 'source') { app.querySelector('#card')?.click(); return; }
   if (mode === 'your') {
-    const score = scoreColor(active.palette, todayColor.lab).score;
+    const score = scoreColor(active.palette.map((color) => color.lab), todayColor.lab).score;
     renderYour(imgSrc, score, true);
   }
   if (mode === 'collection') {

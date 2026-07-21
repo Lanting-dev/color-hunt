@@ -101,7 +101,7 @@ export async function paletteFromFile(file, k = 5) {
   }
 }
 
-export function paletteFromBitmap(bitmap, k = 5) {
+function sampledPixelsFromBitmap(bitmap) {
   const scale = Math.min(1, MAX_DIM / Math.max(bitmap.width, bitmap.height));
   const w = Math.max(1, Math.round(bitmap.width * scale));
   const h = Math.max(1, Math.round(bitmap.height * scale));
@@ -116,5 +116,19 @@ export function paletteFromBitmap(bitmap, k = 5) {
     if (data[i + 3] < 125) continue; // skip transparent
     px.push([data[i], data[i + 1], data[i + 2]]);
   }
+  return px;
+}
+
+export function paletteFromBitmap(bitmap, k = 5) {
+  const px = sampledPixelsFromBitmap(bitmap);
   return extractPalette(px, k);
+}
+
+export async function labPixelsFromFile(file) {
+  const bitmap = await createImageBitmap(file);
+  try {
+    return sampledPixelsFromBitmap(bitmap).map(([r, g, b]) => rgbToLab(r, g, b));
+  } finally {
+    bitmap.close?.();
+  }
 }
