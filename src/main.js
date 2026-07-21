@@ -50,14 +50,15 @@ const baseAnalyticsProps = {
   color_hex: todayColor.hex,
 };
 
-// Warm, never-punishing copy that scales with the score (PRD §5.5).
-function matchCaption(score) {
-  if (score >= 90) return `Uncanny — the same light as ${artistLast}.`;
-  if (score >= 75) return 'So close. The masters would nod.';
-  if (score >= 60) return 'A clear echo. Nicely seen.';
-  if (score >= 40) return 'A quiet rhyme. Keep looking.';
-  if (score >= 20) return "A distant cousin of today's color.";
-  return 'A world apart — but it still counts.';
+// Warm, never-punishing vibe copy. The numeric score stays internal; the UI
+// should feel like a gentle read, not a grade.
+function vibeCaption(score) {
+  if (score >= 90) return `This has the same light ${artistLast} was chasing.`;
+  if (score >= 75) return "That's the color, caught in the wild.";
+  if (score >= 60) return 'A clear echo. The vibe is there.';
+  if (score >= 40) return 'A softer rhyme with today.';
+  if (score >= 20) return "Not exact, but it's speaking the same language.";
+  return 'A different mood, still worth keeping.';
 }
 
 // ---- tiny helpers -----------------------------------------------------------
@@ -186,9 +187,8 @@ function renderHome() {
 }
 
 // ---- screen: YOUR COLOR -----------------------------------------------------
-// score: 0–100 match of the photo's dominant color vs today's color.
-// animate: count up from 0 (fresh find) vs show the final number (on reload).
-function renderYour(photoUrl, score = null, animate = false) {
+// score stays internal for analytics; Your Color shows only a qualitative read.
+function renderYour(photoUrl, score = null) {
   app.className = 'screen-your';
   app.innerHTML = '';
   const hasScore = Number.isFinite(score);
@@ -202,9 +202,9 @@ function renderYour(photoUrl, score = null, animate = false) {
       </div>
     </div>
     ${hasScore ? `
-    <div class="match" id="match">
-      <div class="num"><span id="scoreVal">${animate ? 0 : score}</span><span class="pct">% match</span></div>
-      <div class="caption">${matchCaption(score)}</div>
+    <div class="vibe">
+      <div class="vibe-kicker">Color read</div>
+      <div class="vibe-copy">${vibeCaption(score)}</div>
     </div>` : ''}
     <button class="restart" id="restart">↺ Start over</button>
     <div class="actions">
@@ -221,7 +221,6 @@ function renderYour(photoUrl, score = null, animate = false) {
     renderHome();
   });
   wireNav();
-  if (hasScore && animate) countUp(app.querySelector('#scoreVal'), score);
 }
 
 // today's screen: the chip until a photo is found, then Your Color.
@@ -475,8 +474,9 @@ function renderDayDetail(entry) {
       </div>
     </div>
     ${Number.isFinite(entry.score) ? `
-    <div class="match">
-      <div class="num"><span>${entry.score}</span><span class="pct">% match</span></div>
+    <div class="vibe">
+      <div class="vibe-kicker">Color read</div>
+      <div class="vibe-copy">${vibeCaption(entry.score)}</div>
     </div>` : ''}
     ${artCard(p)}
     ${nav('collection')}
@@ -490,18 +490,6 @@ function renderDayDetail(entry) {
     else toast('More details — coming soon');
   });
   wireNav();
-}
-
-// count 0 → target with an ease-out, ~1s (the payoff of the hunt, PRD §5.5)
-function countUp(node, target, ms = 1100) {
-  const start = performance.now();
-  function frame(now) {
-    const t = Math.min(1, (now - start) / ms);
-    const eased = 1 - Math.pow(1 - t, 3);
-    node.textContent = Math.round(eased * target);
-    if (t < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
 }
 
 // ---- upload flow ------------------------------------------------------------

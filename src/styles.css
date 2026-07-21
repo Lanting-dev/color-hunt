@@ -501,54 +501,43 @@ body {
 .nav .item.active { color: var(--accent); }
 .nav .item svg { width: 24px; height: 24px; }
 
-/* ---------- match score: the payoff of the hunt ---------- */
-.match {
+/* ---------- color read: the payoff without grading ---------- */
+.vibe {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   text-align: center;
-  margin: -8px 0;            /* pull a touch closer than the 40px column gap */
+  width: var(--card-w);
+  margin: -4px 0;
 }
-.match .num {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
+.vibe-kicker {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.vibe-copy {
+  max-width: 280px;
   font-family: var(--serif);
-  font-weight: 900;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.12;
   font-variation-settings: 'SOFT' 0, 'WONK' 1;
   color: var(--ink);
-  line-height: 1;
-}
-.match .num span:first-child {
-  font-size: 64px;
-  font-variant-numeric: tabular-nums;
-}
-.match .pct {
-  font-family: var(--sans);
-  font-weight: 500;
-  font-size: 15px;
-  color: var(--muted);
-}
-.match .caption {
-  font-family: var(--sans);
-  font-weight: 500;
-  font-size: 13px;
-  color: var(--muted);
-  max-width: 260px;
 }
 
 /* ---------- your color: gentle intro ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .screen-your .card, .screen-your .title h1 { animation: rise .5s ease both; }
-.screen-your .match { animation: rise .6s .15s ease both; }
+.screen-your .vibe { animation: rise .6s .15s ease both; }
 
-/* The score + two action buttons add height. The card keeps the shared column
+/* The color read + two action buttons add height. The card keeps the shared column
    width (matching the nav) but its height is capped so the sections can breathe
    evenly and still fit 390×844; the photo just crops a little via cover. */
 #app.screen-your { gap: 28px; }
 #app.screen-your .card { aspect-ratio: auto; height: min(346px, 42vh); }
-#app.screen-your .match { gap: 6px; }
-#app.screen-your .match .num span:first-child { font-size: 52px; }
-/* extra breathing room under the score, dropping the buttons lower */
+/* extra breathing room under the read, dropping the buttons lower */
 #app.screen-your .actions { margin-top: 24px; }
