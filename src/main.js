@@ -274,11 +274,11 @@ function profileStats(entries) {
   };
 }
 
-function profileStat(label, value) {
+function profileRecapStat(ic, value, label) {
   return `
-    <div class="profile-stat">
-      <div class="profile-stat-value">${esc(value)}</div>
-      <div class="profile-stat-label">${esc(label)}</div>
+    <div class="profile-recap-stat">
+      <div class="profile-recap-top">${icon(ic)}<span>${esc(value)}</span></div>
+      <div class="profile-recap-label">${esc(label)}</div>
     </div>`;
 }
 
@@ -329,6 +329,8 @@ async function renderProfile() {
 }
 
 function renderProfileSignedIn(user, entries, stats, syncMessage) {
+  const now = new Date();
+  const monthRecap = recap(entries, now.getFullYear(), now.getMonth());
   const recent = entries.slice(0, 4);
   const memorySwatches = recent.length
     ? recent.map((entry) => ({ colorHex: entry.colorHex, photo: entry.photo }))
@@ -345,10 +347,13 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
         <div class="profile-sync">${icon('check')}<span>${esc(syncMessage)}</span></div>
       </div>
     </section>
-    <section class="profile-stats">
-      ${profileStat('colors found', stats.total)}
-      ${profileStat('this month', stats.thisMonth)}
-      ${profileStat('paintings', stats.paintings)}
+    <section class="profile-recap">
+      <div class="profile-recap-title">Monthly Recap</div>
+      <div class="profile-recap-stats">
+        ${profileRecapStat('flame', monthRecap.streak, 'day streak')}
+        ${profileRecapStat('art', monthRecap.newArt, 'new art')}
+        ${profileRecapStat('palette', monthRecap.newColor, 'new color')}
+      </div>
     </section>
     <section class="profile-card profile-memory">
       <div class="profile-memory-head">
