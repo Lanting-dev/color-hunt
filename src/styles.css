@@ -744,6 +744,9 @@ body {
 .profile-email-form[hidden] {
   display: none;
 }
+.profile-password-step[hidden] {
+  display: none;
+}
 .profile-email-form input {
   width: 100%;
   height: 46px;
@@ -758,13 +761,6 @@ body {
 }
 .profile-email-form input:focus {
   border-color: var(--accent);
-}
-.profile-email-hint {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 17px;
-  text-align: center;
 }
 .profile-new-here {
   display: flex;

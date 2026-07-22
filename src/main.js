@@ -393,9 +393,6 @@ function renderProfileSignedOut(entries, message) {
   const noteCopy = hasLocalFinds
     ? "Sign in to keep this device's finds with your collection."
     : 'Sign in to continue your color collection.';
-  const authHint = authConfigured && hasLocalFinds
-    ? `${entries.length} local ${entries.length === 1 ? 'find' : 'finds'} will be saved after sign in.`
-    : '';
   app.className = 'screen-profile';
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
@@ -407,7 +404,7 @@ function renderProfileSignedOut(entries, message) {
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
         <h2>Sign in</h2>
-        <p>Use email and password to continue.</p>
+        <p>Enter your email to continue.</p>
       </div>
     </section>
     <section class="profile-auth-actions">
@@ -415,16 +412,17 @@ function renderProfileSignedOut(entries, message) {
       <form class="profile-email-form" id="emailForm" hidden>
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
-        <label class="sr-only" for="profilePassword">Password</label>
-        <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6" required>
-        <button type="submit">Sign in</button>
-        <p class="profile-email-hint">Use the email and password tied to your profile.</p>
+        <div class="profile-password-step" id="passwordStep" hidden>
+          <label class="sr-only" for="profilePassword">Password</label>
+          <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6">
+        </div>
+        <button type="submit" id="emailSubmit">Continue</button>
       </form>
       <div class="profile-new-here" id="newHere" hidden>
         <p>New here?</p>
-        <button id="createProfile" type="button">Create profile with these details</button>
+        <button id="createProfile" type="button">Create profile</button>
       </div>
-      <p class="profile-auth-message" id="authMessage">${esc(authHint)}</p>
+      <p class="profile-auth-message" id="authMessage"></p>
     </section>
     ${nav('profile')}
   `;
@@ -435,6 +433,7 @@ function renderProfileSignedOut(entries, message) {
       return;
     }
     const form = app.querySelector('#emailForm');
+    app.querySelector('#emailStart').hidden = true;
     form.hidden = false;
     app.querySelector('#profileEmail').focus();
   });
@@ -442,9 +441,22 @@ function renderProfileSignedOut(entries, message) {
     event.preventDefault();
     const message = app.querySelector('#authMessage');
     const newHere = app.querySelector('#newHere');
-    const email = app.querySelector('#profileEmail').value.trim();
-    const password = app.querySelector('#profilePassword').value;
-    if (!email || !password) return;
+    const emailInput = app.querySelector('#profileEmail');
+    const passwordStep = app.querySelector('#passwordStep');
+    const passwordInput = app.querySelector('#profilePassword');
+    const submit = app.querySelector('#emailSubmit');
+    const email = emailInput.value.trim();
+    if (!email) return;
+    if (passwordStep.hidden) {
+      passwordStep.hidden = false;
+      passwordInput.required = true;
+      submit.textContent = 'Sign in';
+      message.textContent = '';
+      passwordInput.focus();
+      return;
+    }
+    const password = passwordInput.value;
+    if (!password) return;
     newHere.hidden = true;
     message.textContent = 'Signing in...';
     try {
