@@ -199,6 +199,10 @@ body {
   line-height: 38px;
   width: var(--profile-w);
 }
+#app.screen-profile-auth {
+  gap: 30px;
+  padding-top: calc(34px + env(safe-area-inset-top));
+}
 
 .view-switcher {
   display: grid;
@@ -724,6 +728,16 @@ body {
   flex-direction: column;
   gap: 16px;
   width: var(--profile-w, min(350px, 90vw));
+}
+#app.screen-profile-auth .profile-note {
+  min-height: 104px;
+}
+#app.screen-profile-auth .profile-save {
+  gap: 20px;
+  min-height: 218px;
+}
+#app.screen-profile-auth .profile-auth-actions {
+  gap: 12px;
 }
 .profile-email-form button {
   display: flex;
