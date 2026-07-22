@@ -723,7 +723,6 @@ body {
   gap: 16px;
   width: var(--profile-w, min(350px, 90vw));
 }
-.profile-google,
 .profile-email-start,
 .profile-email-form button {
   display: flex;
@@ -736,22 +735,6 @@ body {
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-}
-.profile-google {
-  gap: 15px;
-  border: none;
-  background: var(--accent);
-  color: var(--canvas);
-}
-.google-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  color: #c94636;
-  font-weight: 900;
-  line-height: 1;
 }
 .profile-email-form {
   display: flex;
@@ -821,7 +804,6 @@ body {
   width: 24px;
   height: 24px;
 }
-.profile-google:disabled,
 .profile-email-start:disabled,
 .profile-email-form input:disabled,
 .profile-email-form button:disabled {

@@ -10,10 +10,8 @@ import {
   createProfileWithEmail,
   fetchEntries,
   getSession,
-  googleAuthEnabled,
   onAuthChange,
   signInWithEmail,
-  signInWithGoogle,
   signOut,
   syncEntries,
 } from './auth.js';
@@ -105,9 +103,6 @@ function icon(name) {
     mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/>',
   }[name];
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-}
-function googleMark() {
-  return '<span class="google-mark" aria-hidden="true">G</span>';
 }
 function isNewEmailError(err) {
   const message = String(err?.message || '').toLowerCase();
@@ -412,11 +407,10 @@ function renderProfileSignedOut(entries, message) {
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
         <h2>Sign in</h2>
-        <p>Use email and password or Google account to continue.</p>
+        <p>Use email and password to continue.</p>
       </div>
     </section>
     <section class="profile-auth-actions">
-      <button class="profile-google" id="googleSignIn">${googleMark()}Continue with Google</button>
       <button class="profile-email-start" id="emailStart">${icon('mail')}Continue with email</button>
       <form class="profile-email-form" id="emailForm" hidden>
         <label class="sr-only" for="profileEmail">Email</label>
@@ -443,22 +437,6 @@ function renderProfileSignedOut(entries, message) {
     const form = app.querySelector('#emailForm');
     form.hidden = false;
     app.querySelector('#profileEmail').focus();
-  });
-  app.querySelector('#googleSignIn').addEventListener('click', async () => {
-    const authMessage = app.querySelector('#authMessage');
-    if (!authConfigured) {
-      authMessage.textContent = message;
-      return;
-    }
-    if (!googleAuthEnabled) {
-      authMessage.textContent = 'Google sign in is not set up yet. Use email for now.';
-      return;
-    }
-    try {
-      await signInWithGoogle();
-    } catch (err) {
-      authMessage.textContent = err.message || 'Could not start Google sign in.';
-    }
   });
   app.querySelector('#emailForm').addEventListener('submit', async (event) => {
     event.preventDefault();
