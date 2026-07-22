@@ -794,9 +794,9 @@ body {
 .profile-email-start,
 .profile-email-form button {
   gap: 11px;
-  border: 1px solid var(--muted);
-  background: transparent;
-  color: var(--muted);
+  border: none;
+  background: var(--accent);
+  color: var(--canvas);
 }
 .profile-email-start svg,
 .profile-email-form button svg {
