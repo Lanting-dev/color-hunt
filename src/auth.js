@@ -2,8 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const GOOGLE_AUTH_ENABLED = import.meta.env.VITE_GOOGLE_AUTH_ENABLED === 'true';
 
 export const authConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+export const googleAuthEnabled = authConfigured && GOOGLE_AUTH_ENABLED;
 
 export const supabase = authConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -22,11 +24,28 @@ export function onAuthChange(callback) {
   return () => data.subscription.unsubscribe();
 }
 
-export async function signInWithEmail(email) {
+export async function signInWithEmail(email, { createUser = false } = {}) {
   if (!supabase) throw new Error('Supabase is not configured.');
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.origin },
+    options: {
+      emailRedirectTo: window.location.origin,
+      shouldCreateUser: createUser,
+    },
+  });
+  if (error) throw error;
+}
+
+export async function createProfileWithEmail(email) {
+  return signInWithEmail(email, { createUser: true });
+}
+
+export async function signInWithGoogle() {
+  if (!supabase) throw new Error('Supabase is not configured.');
+  if (!googleAuthEnabled) throw new Error('Google sign in is not set up yet.');
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
   });
   if (error) throw error;
 }

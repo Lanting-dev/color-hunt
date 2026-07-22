@@ -723,6 +723,7 @@ body {
   gap: 16px;
   width: var(--profile-w, min(350px, 90vw));
 }
+.profile-google,
 .profile-email-start,
 .profile-email-form button {
   display: flex;
@@ -735,6 +736,22 @@ body {
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+}
+.profile-google {
+  gap: 15px;
+  border: none;
+  background: var(--accent);
+  color: var(--canvas);
+}
+.google-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #c94636;
+  font-weight: 900;
+  line-height: 1;
 }
 .profile-email-form {
   display: flex;
@@ -766,6 +783,32 @@ body {
   line-height: 17px;
   text-align: center;
 }
+.profile-new-here {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  text-align: center;
+}
+.profile-new-here[hidden] {
+  display: none;
+}
+.profile-new-here button {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--canvas);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
 .profile-email-start,
 .profile-email-form button {
   gap: 11px;
@@ -778,6 +821,7 @@ body {
   width: 24px;
   height: 24px;
 }
+.profile-google:disabled,
 .profile-email-start:disabled,
 .profile-email-form input:disabled,
 .profile-email-form button:disabled {

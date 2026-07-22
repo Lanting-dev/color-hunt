@@ -7,10 +7,13 @@ import { getEntry, saveEntry, clearEntry, allEntries, mergeEntries } from './sta
 import { scoreBucket, track } from './analytics.js';
 import {
   authConfigured,
+  createProfileWithEmail,
   fetchEntries,
   getSession,
+  googleAuthEnabled,
   onAuthChange,
   signInWithEmail,
+  signInWithGoogle,
   signOut,
   syncEntries,
 } from './auth.js';
@@ -102,6 +105,16 @@ function icon(name) {
     mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/>',
   }[name];
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+}
+function googleMark() {
+  return '<span class="google-mark" aria-hidden="true">G</span>';
+}
+function isNewEmailError(err) {
+  const message = String(err?.message || '').toLowerCase();
+  return message.includes('signup')
+    || message.includes('sign up')
+    || message.includes('not found')
+    || message.includes('user not found');
 }
 function nav(active = 'home') {
   const item = (tab, label, ic) =>
@@ -397,18 +410,23 @@ function renderProfileSignedOut(entries, message) {
     <section class="profile-card profile-save">
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
-        <h2>Your color profile</h2>
-        <p>Use email to sign in or create your profile.</p>
+        <h2>Sign in</h2>
+        <p>Use your email or Google account to continue.</p>
       </div>
     </section>
     <section class="profile-auth-actions">
+      <button class="profile-google" id="googleSignIn">${googleMark()}Continue with Google</button>
       <button class="profile-email-start" id="emailStart">${icon('mail')}Continue with email</button>
       <form class="profile-email-form" id="emailForm" hidden>
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
         <button type="submit">Send sign in link</button>
-        <p class="profile-email-hint">Already have a profile? Use the same email. New here? This creates one too.</p>
+        <p class="profile-email-hint">Use the email tied to your profile.</p>
       </form>
+      <div class="profile-new-here" id="newHere" hidden>
+        <p>New here?</p>
+        <button id="createProfile" type="button">Create profile with this email</button>
+      </div>
       <p class="profile-auth-message" id="authMessage">${esc(authHint)}</p>
     </section>
     ${nav('profile')}
@@ -423,17 +441,53 @@ function renderProfileSignedOut(entries, message) {
     form.hidden = false;
     app.querySelector('#profileEmail').focus();
   });
+  app.querySelector('#googleSignIn').addEventListener('click', async () => {
+    const authMessage = app.querySelector('#authMessage');
+    if (!authConfigured) {
+      authMessage.textContent = message;
+      return;
+    }
+    if (!googleAuthEnabled) {
+      authMessage.textContent = 'Google sign in is not set up yet. Use email for now.';
+      return;
+    }
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      authMessage.textContent = err.message || 'Could not start Google sign in.';
+    }
+  });
   app.querySelector('#emailForm').addEventListener('submit', async (event) => {
     event.preventDefault();
     const message = app.querySelector('#authMessage');
+    const newHere = app.querySelector('#newHere');
     const email = app.querySelector('#profileEmail').value.trim();
     if (!email) return;
+    newHere.hidden = true;
     message.textContent = 'Sending sign in link...';
     try {
       await signInWithEmail(email);
-      message.textContent = 'Check your email. This link signs you in or creates your profile.';
+      message.textContent = 'Check your email to sign in.';
     } catch (err) {
-      message.textContent = err.message || 'Could not send sign in link.';
+      if (isNewEmailError(err)) {
+        message.textContent = 'No profile found for that email.';
+        newHere.hidden = false;
+      } else {
+        message.textContent = err.message || 'Could not send sign in link.';
+      }
+    }
+  });
+  app.querySelector('#createProfile').addEventListener('click', async () => {
+    const message = app.querySelector('#authMessage');
+    const email = app.querySelector('#profileEmail').value.trim();
+    if (!email) return;
+    message.textContent = 'Creating profile link...';
+    try {
+      await createProfileWithEmail(email);
+      app.querySelector('#newHere').hidden = true;
+      message.textContent = 'Check your email to create your profile.';
+    } catch (err) {
+      message.textContent = err.message || 'Could not create profile.';
     }
   });
   wireNav();
