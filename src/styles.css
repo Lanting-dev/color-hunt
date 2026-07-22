@@ -744,6 +744,9 @@ body {
 .profile-email-form[hidden] {
   display: none;
 }
+.profile-email-start[hidden] {
+  display: none;
+}
 .profile-password-step[hidden] {
   display: none;
 }
