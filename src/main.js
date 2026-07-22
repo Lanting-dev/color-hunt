@@ -396,76 +396,56 @@ function renderProfileSignedOut(entries, message) {
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
         <h2>Sign in</h2>
-        <p>Enter your email to continue.</p>
+        <p>Save your progress with an email and password.</p>
       </div>
     </section>
     <section class="profile-auth-actions">
-      <button class="profile-email-start" id="emailStart">${icon('mail')}Continue with email</button>
-      <form class="profile-email-form" id="emailForm" hidden>
+      <form class="profile-email-form" id="emailForm">
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
-        <div class="profile-password-step" id="passwordStep" hidden>
-          <label class="sr-only" for="profilePassword">Password</label>
-          <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6">
-        </div>
-        <button type="submit" id="emailSubmit">Continue</button>
-        <button class="profile-create-inline" id="createProfile" type="button" hidden>Create profile</button>
+        <label class="sr-only" for="profilePassword">Password</label>
+        <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6" required>
+        <button type="submit" id="emailSubmit">Sign in</button>
+        <p class="profile-signup-line">New user? <button id="createProfile" type="button">Create profile</button></p>
       </form>
       <p class="profile-auth-message" id="authMessage"></p>
     </section>
     ${nav('profile')}
   `;
 
-  app.querySelector('#emailStart').addEventListener('click', () => {
-    if (!authConfigured) {
-      app.querySelector('#authMessage').textContent = message;
-      return;
-    }
-    const form = app.querySelector('#emailForm');
-    app.querySelector('#emailStart').hidden = true;
-    form.hidden = false;
-    app.querySelector('#profileEmail').focus();
-  });
   app.querySelector('#emailForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const message = app.querySelector('#authMessage');
-    const emailInput = app.querySelector('#profileEmail');
-    const passwordStep = app.querySelector('#passwordStep');
-    const passwordInput = app.querySelector('#profilePassword');
-    const submit = app.querySelector('#emailSubmit');
-    const create = app.querySelector('#createProfile');
-    const email = emailInput.value.trim();
-    if (!email) return;
-    if (passwordStep.hidden) {
-      passwordStep.hidden = false;
-      passwordInput.required = true;
-      submit.textContent = 'Sign in';
-      create.hidden = false;
-      message.textContent = '';
-      passwordInput.focus();
+    const authMessage = app.querySelector('#authMessage');
+    if (!authConfigured) {
+      authMessage.textContent = message;
       return;
     }
-    const password = passwordInput.value;
-    if (!password) return;
-    message.textContent = 'Signing in...';
-    try {
-      await signInWithEmail(email, password);
-      message.textContent = 'Signed in.';
-    } catch (err) {
-      message.textContent = err.message || 'Could not sign in.';
-    }
-  });
-  app.querySelector('#createProfile').addEventListener('click', async () => {
-    const message = app.querySelector('#authMessage');
     const email = app.querySelector('#profileEmail').value.trim();
     const password = app.querySelector('#profilePassword').value;
     if (!email || !password) return;
-    message.textContent = 'Creating profile...';
+    authMessage.textContent = 'Signing in...';
+    try {
+      await signInWithEmail(email, password);
+      authMessage.textContent = 'Signed in.';
+    } catch (err) {
+      authMessage.textContent = err.message || 'Could not sign in.';
+    }
+  });
+  app.querySelector('#createProfile').addEventListener('click', async () => {
+    const authMessage = app.querySelector('#authMessage');
+    if (!authConfigured) {
+      authMessage.textContent = message;
+      return;
+    }
+    const email = app.querySelector('#profileEmail').value.trim();
+    const password = app.querySelector('#profilePassword').value;
+    if (!email || !password) return;
+    authMessage.textContent = 'Creating profile...';
     try {
       await createProfileWithEmail(email, password);
-      message.textContent = 'Profile created. Check your email if confirmation is required.';
+      authMessage.textContent = 'Profile created. Check your email if confirmation is required.';
     } catch (err) {
-      message.textContent = err.message || 'Could not create profile.';
+      authMessage.textContent = err.message || 'Could not create profile.';
     }
   });
   wireNav();

@@ -725,7 +725,6 @@ body {
   gap: 16px;
   width: var(--profile-w, min(350px, 90vw));
 }
-.profile-email-start,
 .profile-email-form button {
   display: flex;
   align-items: center;
@@ -746,12 +745,6 @@ body {
 .profile-email-form[hidden] {
   display: none;
 }
-.profile-email-start[hidden] {
-  display: none;
-}
-.profile-password-step[hidden] {
-  display: none;
-}
 .profile-email-form input {
   width: 100%;
   height: 46px;
@@ -767,31 +760,39 @@ body {
 .profile-email-form input:focus {
   border-color: var(--accent);
 }
-.profile-email-start,
 .profile-email-form button {
   gap: 11px;
   border: none;
   background: var(--accent);
   color: var(--canvas);
 }
-.profile-email-form .profile-create-inline {
-  border: 1px solid var(--muted);
-  background: transparent;
-  color: var(--muted);
-}
-.profile-create-inline[hidden] {
-  display: none;
-}
-.profile-email-start svg,
 .profile-email-form button svg {
   width: 24px;
   height: 24px;
 }
-.profile-email-start:disabled,
 .profile-email-form input:disabled,
 .profile-email-form button:disabled {
   opacity: .45;
   cursor: not-allowed;
+}
+.profile-signup-line {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  text-align: center;
+}
+.profile-signup-line button {
+  display: inline;
+  width: auto;
+  height: auto;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
 }
 .profile-auth-message {
   min-height: 17px;
