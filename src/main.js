@@ -587,7 +587,6 @@ function renderCollection(opts = {}) {
   calView = { year, month };
 
   const byDate = entriesByDate(entries);
-  const { streak, newArt, newColor } = recap(entries, year, month);
 
   // build the calendar grid (Sunday-first), including leading/trailing days
   const firstDow = new Date(Date.UTC(year, month, 1)).getUTCDay();
@@ -603,21 +602,10 @@ function renderCollection(opts = {}) {
     cells.push({ label, inMonth, entry });
   }
 
-  const stat = (ic, num, lab) =>
-    `<div class="stat"><div class="stat-top">${icon(ic)}<span class="stat-num">${num}</span></div><div class="stat-lab">${lab}</div></div>`;
-
   const wrap = el(`<div style="display:contents"></div>`);
   wrap.innerHTML = `
     <h1 class="page-title">Collection</h1>
     ${collectionSwitcher('calendar')}
-    <div class="recap">
-      <div class="recap-label">Monthly Recap</div>
-      <div class="recap-stats">
-        ${stat('flame', streak, 'day streak')}
-        ${stat('art', newArt, 'new art')}
-        ${stat('palette', newColor, 'new color')}
-      </div>
-    </div>
     <div class="monthnav">
       <button class="chev" id="prevM" aria-label="Previous month">${icon('chev')}</button>
       <span>${MONTHS[month]} ${year}</span>
