@@ -144,6 +144,16 @@ body {
 }
 .cta:active { transform: translateY(1px); filter: brightness(.95); }
 
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: var(--card-w);
+}
+.home-actions .cta {
+  width: 100%;
+}
+
 /* ---------- Your Color actions: primary + border-only secondary ---------- */
 .actions {
   display: flex;

@@ -142,10 +142,12 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
 }
 
-// hidden file input (Capture your color)
-const fileInput = el('<input type="file" accept="image/*" capture="environment" hidden>');
-document.body.appendChild(fileInput);
-fileInput.addEventListener('change', onPhoto);
+// hidden photo inputs: one opens the camera on mobile, one keeps library upload.
+const cameraInput = el('<input type="file" accept="image/*" capture="environment" hidden>');
+const uploadInput = el('<input type="file" accept="image/*" hidden>');
+document.body.append(cameraInput, uploadInput);
+cameraInput.addEventListener('change', onPhoto);
+uploadInput.addEventListener('change', onPhoto);
 
 // Where does today's color actually live in the painting? Computed from the real
 // image as the densest concentration of the color (not the cluster centroid), so
@@ -183,7 +185,10 @@ function renderHome() {
         <div class="vals" style="color:var(--ink)">HEX ${todayColor.hex.toUpperCase()}<br>RGB ${r}, ${g}, ${b}</div>
       </div>
     </div>
-    <button class="cta" id="cta">Capture your color</button>
+    <div class="home-actions">
+      <button class="cta" id="cameraCta">Take photo</button>
+      <button class="btn btn-ghost" id="uploadCta">Upload photo</button>
+    </div>
     ${nav()}
   `;
   app.append(...wrap.childNodes);
@@ -207,7 +212,8 @@ function renderHome() {
     if (revealed) track('source_revealed', baseAnalyticsProps);
   });
 
-  app.querySelector('#cta').addEventListener('click', () => fileInput.click());
+  app.querySelector('#cameraCta').addEventListener('click', () => cameraInput.click());
+  app.querySelector('#uploadCta').addEventListener('click', () => uploadInput.click());
   wireNav();
 }
 
@@ -238,7 +244,7 @@ function renderYour(photoUrl, score = null) {
     ${nav()}
   `;
   app.append(...wrap.childNodes);
-  app.querySelector('#retry').addEventListener('click', () => fileInput.click());
+  app.querySelector('#retry').addEventListener('click', () => cameraInput.click());
   app.querySelector('#toCollection').addEventListener('click', () => renderCollection());
   app.querySelector('#restart').addEventListener('click', () => {
     clearEntry(day);      // forget today's find so the full flow can run again
@@ -699,7 +705,7 @@ function renderDayDetail(entry) {
 // ---- upload flow ------------------------------------------------------------
 async function onPhoto(e) {
   const file = e.target.files && e.target.files[0];
-  fileInput.value = '';
+  e.target.value = '';
   if (!file) return;
   try {
     const bitmap = await createImageBitmap(file);
