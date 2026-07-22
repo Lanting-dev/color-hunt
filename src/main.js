@@ -379,12 +379,21 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
   wireNav();
 }
 
-function renderProfileSignedOut(entries, message) {
+function renderProfileSignedOut(entries, message, mode = 'signin') {
+  const isSignup = mode === 'signup';
   const hasLocalFinds = entries.length > 0;
   const noteTitle = hasLocalFinds ? 'Save these colors' : 'Welcome back';
   const noteCopy = hasLocalFinds
     ? "Sign in to keep this device's finds with your collection."
     : 'Sign in to continue your color collection.';
+  const title = isSignup ? 'Create profile' : 'Sign in';
+  const copy = isSignup
+    ? 'Save your colors with an email and password.'
+    : 'Save your progress with an email and password.';
+  const submitLabel = isSignup ? 'Create profile' : 'Sign in';
+  const switchCopy = isSignup ? 'Already have a profile?' : 'New user?';
+  const switchLabel = isSignup ? 'Sign in' : 'Create profile';
+  const passwordAutocomplete = isSignup ? 'new-password' : 'current-password';
   app.className = 'screen-profile';
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
@@ -395,8 +404,8 @@ function renderProfileSignedOut(entries, message) {
     <section class="profile-card profile-save">
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
-        <h2>Sign in</h2>
-        <p>Save your progress with an email and password.</p>
+        <h2>${esc(title)}</h2>
+        <p>${esc(copy)}</p>
       </div>
     </section>
     <section class="profile-auth-actions">
@@ -404,9 +413,9 @@ function renderProfileSignedOut(entries, message) {
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
         <label class="sr-only" for="profilePassword">Password</label>
-        <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6" required>
-        <button type="submit" id="emailSubmit">Sign in</button>
-        <p class="profile-signup-line">New user? <button id="createProfile" type="button">Create profile</button></p>
+        <input id="profilePassword" type="password" autocomplete="${passwordAutocomplete}" placeholder="Password" minlength="6" required>
+        <button type="submit" id="emailSubmit">${esc(submitLabel)}</button>
+        <p class="profile-signup-line">${esc(switchCopy)} <button id="switchAuthMode" type="button">${esc(switchLabel)}</button></p>
       </form>
       <p class="profile-auth-message" id="authMessage"></p>
     </section>
@@ -423,30 +432,21 @@ function renderProfileSignedOut(entries, message) {
     const email = app.querySelector('#profileEmail').value.trim();
     const password = app.querySelector('#profilePassword').value;
     if (!email || !password) return;
-    authMessage.textContent = 'Signing in...';
+    authMessage.textContent = isSignup ? 'Creating profile...' : 'Signing in...';
     try {
-      await signInWithEmail(email, password);
-      authMessage.textContent = 'Signed in.';
+      if (isSignup) {
+        await createProfileWithEmail(email, password);
+        authMessage.textContent = 'Profile created. Check your email if confirmation is required.';
+      } else {
+        await signInWithEmail(email, password);
+        authMessage.textContent = 'Signed in.';
+      }
     } catch (err) {
-      authMessage.textContent = err.message || 'Could not sign in.';
+      authMessage.textContent = err.message || (isSignup ? 'Could not create profile.' : 'Could not sign in.');
     }
   });
-  app.querySelector('#createProfile').addEventListener('click', async () => {
-    const authMessage = app.querySelector('#authMessage');
-    if (!authConfigured) {
-      authMessage.textContent = message;
-      return;
-    }
-    const email = app.querySelector('#profileEmail').value.trim();
-    const password = app.querySelector('#profilePassword').value;
-    if (!email || !password) return;
-    authMessage.textContent = 'Creating profile...';
-    try {
-      await createProfileWithEmail(email, password);
-      authMessage.textContent = 'Profile created. Check your email if confirmation is required.';
-    } catch (err) {
-      authMessage.textContent = err.message || 'Could not create profile.';
-    }
+  app.querySelector('#switchAuthMode').addEventListener('click', () => {
+    renderProfileSignedOut(entries, message, isSignup ? 'signin' : 'signup');
   });
   wireNav();
 }
