@@ -732,6 +732,7 @@ body {
 }
 #app.screen-profile-auth .profile-save {
   gap: 18px;
+  justify-content: center;
   min-height: 300px;
 }
 #app.screen-profile-auth .profile-auth-actions {
