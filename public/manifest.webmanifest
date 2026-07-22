@@ -1,6 +1,7 @@
 {
   "name": "Color Hunt",
   "short_name": "Color Hunt",
+  "id": "/",
   "description": "Find today's color in your own world.",
   "start_url": "/",
   "scope": "/",
@@ -8,6 +9,7 @@
   "orientation": "portrait",
   "background_color": "#0e0e10",
   "theme_color": "#0e0e10",
+  "categories": ["lifestyle", "art", "photo"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
