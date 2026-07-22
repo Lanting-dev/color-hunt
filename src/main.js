@@ -329,7 +329,9 @@ async function renderProfile() {
 
 function renderProfileSignedIn(user, entries, stats, syncMessage) {
   const recent = entries.slice(0, 4);
-  const swatches = recent.length ? recent.map((entry) => entry.colorHex) : [todayColor.hex, '#5f98c7', '#af7648', '#7e8f6b'];
+  const memorySwatches = recent.length
+    ? recent.map((entry) => ({ colorHex: entry.colorHex, photo: entry.photo }))
+    : [todayColor.hex, '#5f98c7', '#af7648', '#7e8f6b'].map((colorHex) => ({ colorHex }));
   const storage = syncMessage.toLowerCase().includes('needs') ? 'needs setup' : 'synced';
   app.className = 'screen-profile';
   app.innerHTML = `
@@ -351,7 +353,11 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
       <div class="profile-memory-head">
         <h2>Collection memory</h2>
         <div class="profile-mini-swatches">
-          ${swatches.slice(0, 4).map((color) => `<span style="background:${esc(color)}"></span>`).join('')}
+          ${memorySwatches.slice(0, 4).map((entry) => {
+            const color = esc(entry.colorHex || todayColor.hex);
+            const image = entry.photo ? `background-image:url('${esc(entry.photo)}');` : `background:${color};`;
+            return `<span style="${image}border-color:${color}"></span>`;
+          }).join('')}
         </div>
       </div>
       <p>First find: ${esc(stats.firstDate)}</p>

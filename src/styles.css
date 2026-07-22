@@ -659,7 +659,11 @@ body {
   width: 20px;
   height: 20px;
   margin-left: -5px;
+  border: 1px solid transparent;
   border-radius: 999px;
+  background-position: center;
+  background-size: cover;
+  flex: 0 0 auto;
 }
 .profile-mini-swatches span:first-child { margin-left: 0; }
 .profile-signout {
