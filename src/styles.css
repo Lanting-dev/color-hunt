@@ -759,6 +759,13 @@ body {
 .profile-email-form input:focus {
   border-color: var(--accent);
 }
+.profile-email-hint {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  text-align: center;
+}
 .profile-email-start,
 .profile-email-form button {
   gap: 11px;

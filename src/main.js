@@ -379,17 +379,25 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
 }
 
 function renderProfileSignedOut(entries, message) {
+  const hasLocalFinds = entries.length > 0;
+  const noteTitle = hasLocalFinds ? 'Save these colors' : 'Welcome back';
+  const noteCopy = hasLocalFinds
+    ? "Sign in to keep this device's finds with your collection."
+    : 'Sign in to continue your color collection.';
+  const authHint = authConfigured && hasLocalFinds
+    ? `${entries.length} local ${entries.length === 1 ? 'find' : 'finds'} will be saved after sign in.`
+    : '';
   app.className = 'screen-profile';
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
     <section class="profile-card profile-note">
-      <h2>Already have colors?</h2>
-      <p>Sign in to save this device's finds and keep them synced.</p>
+      <h2>${esc(noteTitle)}</h2>
+      <p>${esc(noteCopy)}</p>
     </section>
     <section class="profile-card profile-save">
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
-        <h2>Save or continue</h2>
+        <h2>Your color profile</h2>
         <p>Use email to sign in or create your profile.</p>
       </div>
     </section>
@@ -399,8 +407,9 @@ function renderProfileSignedOut(entries, message) {
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
         <button type="submit">Send sign in link</button>
+        <p class="profile-email-hint">We'll send a magic link. New here? This creates your profile too.</p>
       </form>
-      <p class="profile-auth-message" id="authMessage">${authConfigured && entries.length ? `${entries.length} local finds will be saved after sign in.` : ''}</p>
+      <p class="profile-auth-message" id="authMessage">${esc(authHint)}</p>
     </section>
     ${nav('profile')}
   `;
