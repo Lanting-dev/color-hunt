@@ -765,38 +765,20 @@ body {
 .profile-email-form input:focus {
   border-color: var(--accent);
 }
-.profile-new-here {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 17px;
-  text-align: center;
-}
-.profile-new-here[hidden] {
-  display: none;
-}
-.profile-new-here button {
-  width: 100%;
-  height: 46px;
-  border: none;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--canvas);
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-}
 .profile-email-start,
 .profile-email-form button {
   gap: 11px;
   border: none;
   background: var(--accent);
   color: var(--canvas);
+}
+.profile-email-form .profile-create-inline {
+  border: 1px solid var(--muted);
+  background: transparent;
+  color: var(--muted);
+}
+.profile-create-inline[hidden] {
+  display: none;
 }
 .profile-email-start svg,
 .profile-email-form button svg {

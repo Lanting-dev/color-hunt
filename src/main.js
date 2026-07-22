@@ -104,14 +104,6 @@ function icon(name) {
   }[name];
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 }
-function isNewEmailError(err) {
-  const message = String(err?.message || '').toLowerCase();
-  return message.includes('signup')
-    || message.includes('sign up')
-    || message.includes('invalid login credentials')
-    || message.includes('not found')
-    || message.includes('user not found');
-}
 function nav(active = 'home') {
   const item = (tab, label, ic) =>
     `<button class="item${tab === active ? ' active' : ''}" data-tab="${tab}"><span>${icon(ic)}</span>${label}</button>`;
@@ -417,11 +409,8 @@ function renderProfileSignedOut(entries, message) {
           <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6">
         </div>
         <button type="submit" id="emailSubmit">Continue</button>
+        <button class="profile-create-inline" id="createProfile" type="button" hidden>Create profile</button>
       </form>
-      <div class="profile-new-here" id="newHere" hidden>
-        <p>New here?</p>
-        <button id="createProfile" type="button">Create profile</button>
-      </div>
       <p class="profile-auth-message" id="authMessage"></p>
     </section>
     ${nav('profile')}
@@ -440,35 +429,30 @@ function renderProfileSignedOut(entries, message) {
   app.querySelector('#emailForm').addEventListener('submit', async (event) => {
     event.preventDefault();
     const message = app.querySelector('#authMessage');
-    const newHere = app.querySelector('#newHere');
     const emailInput = app.querySelector('#profileEmail');
     const passwordStep = app.querySelector('#passwordStep');
     const passwordInput = app.querySelector('#profilePassword');
     const submit = app.querySelector('#emailSubmit');
+    const create = app.querySelector('#createProfile');
     const email = emailInput.value.trim();
     if (!email) return;
     if (passwordStep.hidden) {
       passwordStep.hidden = false;
       passwordInput.required = true;
       submit.textContent = 'Sign in';
+      create.hidden = false;
       message.textContent = '';
       passwordInput.focus();
       return;
     }
     const password = passwordInput.value;
     if (!password) return;
-    newHere.hidden = true;
     message.textContent = 'Signing in...';
     try {
       await signInWithEmail(email, password);
       message.textContent = 'Signed in.';
     } catch (err) {
-      if (isNewEmailError(err)) {
-        message.textContent = 'No profile found for those details.';
-        newHere.hidden = false;
-      } else {
-        message.textContent = err.message || 'Could not sign in.';
-      }
+      message.textContent = err.message || 'Could not sign in.';
     }
   });
   app.querySelector('#createProfile').addEventListener('click', async () => {
@@ -479,7 +463,6 @@ function renderProfileSignedOut(entries, message) {
     message.textContent = 'Creating profile...';
     try {
       await createProfileWithEmail(email, password);
-      app.querySelector('#newHere').hidden = true;
       message.textContent = 'Profile created. Check your email if confirmation is required.';
     } catch (err) {
       message.textContent = err.message || 'Could not create profile.';
