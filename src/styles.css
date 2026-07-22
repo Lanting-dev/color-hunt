@@ -177,7 +177,7 @@ body {
 .btn-ghost:active { background: rgba(154, 154, 152, .12); }
 
 /* ---------- collection: calendar view ---------- */
-#app.screen-collection { gap: 16px; justify-content: flex-start; }
+#app.screen-collection { gap: 24px; justify-content: flex-start; }
 #app.screen-profile {
   --profile-w: var(--card-w);
   gap: 46px;
