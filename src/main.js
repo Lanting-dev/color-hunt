@@ -407,7 +407,7 @@ function renderProfileSignedOut(entries, message) {
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
         <button type="submit">Send sign in link</button>
-        <p class="profile-email-hint">We'll send a magic link. New here? This creates your profile too.</p>
+        <p class="profile-email-hint">Already have a profile? Use the same email. New here? This creates one too.</p>
       </form>
       <p class="profile-auth-message" id="authMessage">${esc(authHint)}</p>
     </section>
@@ -431,7 +431,7 @@ function renderProfileSignedOut(entries, message) {
     message.textContent = 'Sending sign in link...';
     try {
       await signInWithEmail(email);
-      message.textContent = 'Check your email for the sign in link.';
+      message.textContent = 'Check your email. This link signs you in or creates your profile.';
     } catch (err) {
       message.textContent = err.message || 'Could not send sign in link.';
     }
