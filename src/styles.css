@@ -201,8 +201,8 @@ body {
 }
 #app.screen-profile-auth {
   --profile-w: var(--card-w);
-  gap: 24px;
-  padding-top: calc(40px + env(safe-area-inset-top));
+  gap: 30px;
+  padding-top: calc(42px + env(safe-area-inset-top));
 }
 
 .view-switcher {
@@ -731,8 +731,8 @@ body {
   width: var(--profile-w, min(350px, 90vw));
 }
 #app.screen-profile-auth .profile-save {
-  gap: 16px;
-  min-height: 196px;
+  gap: 18px;
+  min-height: 208px;
 }
 #app.screen-profile-auth .profile-auth-actions {
   gap: 12px;
