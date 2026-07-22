@@ -382,13 +382,11 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
 function renderProfileSignedOut(entries, message, mode = 'signin') {
   const isSignup = mode === 'signup';
   const hasLocalFinds = entries.length > 0;
-  const noteTitle = hasLocalFinds ? 'Save these colors' : 'Sign in';
-  const noteCopy = hasLocalFinds
-    ? "Sign in to keep this device's finds with your collection."
-    : 'Sign in to save your color collection.';
-  const title = isSignup ? 'Create profile' : 'Sign in';
+  const title = isSignup ? 'Create profile' : hasLocalFinds ? 'Save these colors' : 'Sign in';
   const copy = isSignup
     ? 'Save your colors with an email and password.'
+    : hasLocalFinds
+      ? "Sign in to keep this device's finds with your collection."
     : 'Save your progress with an email and password.';
   const submitLabel = isSignup ? 'Create profile' : 'Sign in';
   const switchCopy = isSignup ? 'Already have a profile?' : 'New user?';
@@ -397,10 +395,6 @@ function renderProfileSignedOut(entries, message, mode = 'signin') {
   app.className = 'screen-profile screen-profile-auth';
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
-    <section class="profile-card profile-note">
-      <h2>${esc(noteTitle)}</h2>
-      <p>${esc(noteCopy)}</p>
-    </section>
     <section class="profile-card profile-save">
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">

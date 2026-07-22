@@ -200,8 +200,8 @@ body {
   width: var(--profile-w);
 }
 #app.screen-profile-auth {
-  gap: 30px;
-  padding-top: calc(34px + env(safe-area-inset-top));
+  gap: 34px;
+  padding-top: calc(42px + env(safe-area-inset-top));
 }
 
 .view-switcher {
@@ -728,9 +728,6 @@ body {
   flex-direction: column;
   gap: 16px;
   width: var(--profile-w, min(350px, 90vw));
-}
-#app.screen-profile-auth .profile-note {
-  min-height: 104px;
 }
 #app.screen-profile-auth .profile-save {
   gap: 20px;
