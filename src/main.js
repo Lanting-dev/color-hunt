@@ -382,10 +382,10 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
 function renderProfileSignedOut(entries, message, mode = 'signin') {
   const isSignup = mode === 'signup';
   const hasLocalFinds = entries.length > 0;
-  const noteTitle = hasLocalFinds ? 'Save these colors' : 'Welcome back';
+  const noteTitle = hasLocalFinds ? 'Save these colors' : 'Sign in';
   const noteCopy = hasLocalFinds
     ? "Sign in to keep this device's finds with your collection."
-    : 'Sign in to continue your color collection.';
+    : 'Sign in to save your color collection.';
   const title = isSignup ? 'Create profile' : 'Sign in';
   const copy = isSignup
     ? 'Save your colors with an email and password.'
