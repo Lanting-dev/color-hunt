@@ -24,20 +24,25 @@ export function onAuthChange(callback) {
   return () => data.subscription.unsubscribe();
 }
 
-export async function signInWithEmail(email, { createUser = false } = {}) {
+export async function signInWithEmail(email, password) {
   if (!supabase) throw new Error('Supabase is not configured.');
-  const { error } = await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
-    options: {
-      emailRedirectTo: window.location.origin,
-      shouldCreateUser: createUser,
-    },
+    password,
   });
   if (error) throw error;
 }
 
-export async function createProfileWithEmail(email) {
-  return signInWithEmail(email, { createUser: true });
+export async function createProfileWithEmail(email, password) {
+  if (!supabase) throw new Error('Supabase is not configured.');
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: window.location.origin,
+    },
+  });
+  if (error) throw error;
 }
 
 export async function signInWithGoogle() {

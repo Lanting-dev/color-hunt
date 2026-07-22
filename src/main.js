@@ -113,6 +113,7 @@ function isNewEmailError(err) {
   const message = String(err?.message || '').toLowerCase();
   return message.includes('signup')
     || message.includes('sign up')
+    || message.includes('invalid login credentials')
     || message.includes('not found')
     || message.includes('user not found');
 }
@@ -411,7 +412,7 @@ function renderProfileSignedOut(entries, message) {
       <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
       <div class="profile-save-copy">
         <h2>Sign in</h2>
-        <p>Use your email or Google account to continue.</p>
+        <p>Use email and password or Google account to continue.</p>
       </div>
     </section>
     <section class="profile-auth-actions">
@@ -420,12 +421,14 @@ function renderProfileSignedOut(entries, message) {
       <form class="profile-email-form" id="emailForm" hidden>
         <label class="sr-only" for="profileEmail">Email</label>
         <input id="profileEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
-        <button type="submit">Send sign in link</button>
-        <p class="profile-email-hint">Use the email tied to your profile.</p>
+        <label class="sr-only" for="profilePassword">Password</label>
+        <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6" required>
+        <button type="submit">Sign in</button>
+        <p class="profile-email-hint">Use the email and password tied to your profile.</p>
       </form>
       <div class="profile-new-here" id="newHere" hidden>
         <p>New here?</p>
-        <button id="createProfile" type="button">Create profile with this email</button>
+        <button id="createProfile" type="button">Create profile with these details</button>
       </div>
       <p class="profile-auth-message" id="authMessage">${esc(authHint)}</p>
     </section>
@@ -462,30 +465,32 @@ function renderProfileSignedOut(entries, message) {
     const message = app.querySelector('#authMessage');
     const newHere = app.querySelector('#newHere');
     const email = app.querySelector('#profileEmail').value.trim();
-    if (!email) return;
+    const password = app.querySelector('#profilePassword').value;
+    if (!email || !password) return;
     newHere.hidden = true;
-    message.textContent = 'Sending sign in link...';
+    message.textContent = 'Signing in...';
     try {
-      await signInWithEmail(email);
-      message.textContent = 'Check your email to sign in.';
+      await signInWithEmail(email, password);
+      message.textContent = 'Signed in.';
     } catch (err) {
       if (isNewEmailError(err)) {
-        message.textContent = 'No profile found for that email.';
+        message.textContent = 'No profile found for those details.';
         newHere.hidden = false;
       } else {
-        message.textContent = err.message || 'Could not send sign in link.';
+        message.textContent = err.message || 'Could not sign in.';
       }
     }
   });
   app.querySelector('#createProfile').addEventListener('click', async () => {
     const message = app.querySelector('#authMessage');
     const email = app.querySelector('#profileEmail').value.trim();
-    if (!email) return;
-    message.textContent = 'Creating profile link...';
+    const password = app.querySelector('#profilePassword').value;
+    if (!email || !password) return;
+    message.textContent = 'Creating profile...';
     try {
-      await createProfileWithEmail(email);
+      await createProfileWithEmail(email, password);
       app.querySelector('#newHere').hidden = true;
-      message.textContent = 'Check your email to create your profile.';
+      message.textContent = 'Profile created. Check your email if confirmation is required.';
     } catch (err) {
       message.textContent = err.message || 'Could not create profile.';
     }
