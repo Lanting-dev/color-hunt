@@ -11,9 +11,11 @@ import {
   fetchEntries,
   getSession,
   onAuthChange,
+  requestPasswordReset,
   signInWithEmail,
   signOut,
   syncEntries,
+  updatePassword,
 } from './auth.js';
 
 const app = document.getElementById('app');
@@ -127,7 +129,13 @@ function wireNav() {
   });
 }
 
-onAuthChange(() => {
+let passwordRecoveryActive = false;
+onAuthChange((_session, event) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    passwordRecoveryActive = true;
+    renderPasswordReset();
+    return;
+  }
   if (app.classList.contains('screen-profile')) renderProfile();
 });
 
@@ -324,6 +332,10 @@ async function renderProfile() {
   }
 
   const stats = profileStats(entries);
+  if (passwordRecoveryActive && session?.user) {
+    renderPasswordReset();
+    return;
+  }
   if (session?.user) renderProfileSignedIn(session.user, entries, stats, syncMessage);
   else renderProfileSignedOut(entries, syncMessage);
 }
@@ -414,6 +426,7 @@ function renderProfileSignedOut(entries, message, mode = 'signin') {
         <label class="sr-only" for="profilePassword">Password</label>
         <input id="profilePassword" type="password" autocomplete="${passwordAutocomplete}" placeholder="Password" minlength="6" required>
         <button type="submit" id="emailSubmit">${esc(submitLabel)}</button>
+        ${!isSignup ? '<p class="profile-signup-line"><button id="forgotPassword" type="button">Forgot password?</button></p>' : ''}
         <p class="profile-signup-line">${esc(switchCopy)} <button id="switchAuthMode" type="button">${esc(switchLabel)}</button></p>
       </form>
       <p class="profile-auth-message" id="authMessage"></p>
@@ -446,6 +459,72 @@ function renderProfileSignedOut(entries, message, mode = 'signin') {
   });
   app.querySelector('#switchAuthMode').addEventListener('click', () => {
     renderProfileSignedOut(entries, message, isSignup ? 'signin' : 'signup');
+  });
+  const forgotPassword = app.querySelector('#forgotPassword');
+  if (forgotPassword) forgotPassword.addEventListener('click', async () => {
+    const authMessage = app.querySelector('#authMessage');
+    const email = app.querySelector('#profileEmail').value.trim();
+    if (!authConfigured) {
+      authMessage.textContent = message;
+      return;
+    }
+    if (!email) {
+      authMessage.textContent = 'Enter your email first.';
+      app.querySelector('#profileEmail').focus();
+      return;
+    }
+    authMessage.textContent = 'Sending reset email...';
+    try {
+      await requestPasswordReset(email);
+      authMessage.textContent = 'Check your email to reset your password.';
+    } catch (err) {
+      authMessage.textContent = err.message || 'Could not send reset email.';
+    }
+  });
+  wireNav();
+}
+
+function renderPasswordReset(message = '') {
+  app.className = 'screen-profile screen-profile-auth';
+  app.innerHTML = `
+    <h1 class="page-title">Profile</h1>
+    <section class="profile-card profile-save">
+      <div class="profile-main-swatch" style="background:${todayColor.hex}"></div>
+      <div class="profile-save-copy">
+        <h2>Reset password</h2>
+        <p>Choose a new password for your profile.</p>
+      </div>
+    </section>
+    <section class="profile-auth-actions">
+      <form class="profile-email-form" id="resetForm">
+        <label class="sr-only" for="newPassword">New password</label>
+        <input id="newPassword" type="password" autocomplete="new-password" placeholder="New password" minlength="6" required>
+        <button type="submit">Save password</button>
+        <p class="profile-signup-line"><button id="backToSignIn" type="button">Back to sign in</button></p>
+      </form>
+      <p class="profile-auth-message" id="authMessage">${esc(message)}</p>
+    </section>
+    ${nav('profile')}
+  `;
+  app.querySelector('#resetForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const authMessage = app.querySelector('#authMessage');
+    const password = app.querySelector('#newPassword').value;
+    if (!password) return;
+    authMessage.textContent = 'Saving password...';
+    try {
+      await updatePassword(password);
+      passwordRecoveryActive = false;
+      authMessage.textContent = 'Password updated.';
+      renderProfile();
+    } catch (err) {
+      authMessage.textContent = err.message || 'Could not update password.';
+    }
+  });
+  app.querySelector('#backToSignIn').addEventListener('click', async () => {
+    passwordRecoveryActive = false;
+    await signOut().catch(() => {});
+    renderProfile();
   });
   wireNav();
 }

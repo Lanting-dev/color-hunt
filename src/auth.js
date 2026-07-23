@@ -18,7 +18,7 @@ export async function getSession() {
 
 export function onAuthChange(callback) {
   if (!supabase) return () => {};
-  const { data } = supabase.auth.onAuthStateChange((_event, session) => callback(session));
+  const { data } = supabase.auth.onAuthStateChange((event, session) => callback(session, event));
   return () => data.subscription.unsubscribe();
 }
 
@@ -40,6 +40,20 @@ export async function createProfileWithEmail(email, password) {
       emailRedirectTo: window.location.origin,
     },
   });
+  if (error) throw error;
+}
+
+export async function requestPasswordReset(email) {
+  if (!supabase) throw new Error('Supabase is not configured.');
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin,
+  });
+  if (error) throw error;
+}
+
+export async function updatePassword(password) {
+  if (!supabase) throw new Error('Supabase is not configured.');
+  const { error } = await supabase.auth.updateUser({ password });
   if (error) throw error;
 }
 
