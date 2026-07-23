@@ -607,7 +607,9 @@ function renderYearCollection(entries, year) {
       const exists = dom <= daysInMonth;
       const entry = exists ? byDate[`${month}-${dom}`] : null;
       const future = exists && Date.UTC(year, month, dom) > todayUtc;
-      const style = entry ? ` style="background:${entry.colorHex}"` : '';
+      const style = entry
+        ? ` style="background-image:url('${esc(entry.photo)}');border-color:${esc(entry.colorHex)}"`
+        : '';
       const cls = `year-pixel${entry ? ' found' : ''}${!exists || future ? ' blank' : ''}`;
       monthCells.push(`<button class="${cls}" data-month="${month}" data-day="${dom}" ${entry ? '' : 'tabindex="-1"'}${style}></button>`);
     }
