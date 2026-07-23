@@ -33,11 +33,22 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  padding: calc(28px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  padding: calc(28px + env(safe-area-inset-top)) 20px calc(112px + env(safe-area-inset-bottom));
 }
 
 /* ---------- title ---------- */
-.title { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.title {
+  position: sticky;
+  top: calc(12px + env(safe-area-inset-top));
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 2px 0;
+  background: var(--canvas);
+}
 .title .date { font-size: 13px; font-weight: 500; color: var(--muted); }
 .title h1 {
   font-family: var(--serif);
@@ -182,9 +193,12 @@ body {
   --profile-w: var(--card-w);
   gap: 46px;
   justify-content: flex-start;
-  padding: calc(52px + env(safe-area-inset-top)) 20px calc(23px + env(safe-area-inset-bottom));
+  padding: calc(52px + env(safe-area-inset-top)) 20px calc(112px + env(safe-area-inset-bottom));
 }
 .page-title {
+  position: sticky;
+  top: calc(12px + env(safe-area-inset-top));
+  z-index: 8;
   font-family: var(--serif);
   font-weight: 900;
   font-size: 30px;
@@ -193,6 +207,8 @@ body {
   line-height: 1;
   text-align: center;
   width: min(350px, 90vw);
+  padding: 2px 0;
+  background: var(--canvas);
 }
 #app.screen-profile .page-title {
   font-size: 34px;
@@ -468,6 +484,11 @@ body {
 
 /* ---------- bottom nav ---------- */
 .nav {
+  position: fixed;
+  left: 50%;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  z-index: 20;
+  transform: translateX(-50%);
   width: min(350px, 90vw);
   height: 71px;
   background: var(--surface);
@@ -476,7 +497,6 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 30px 13px;
-  margin-top: auto;
 }
 .nav .item {
   display: flex;
