@@ -15,6 +15,7 @@ import {
   signInWithEmail,
   signOut,
   syncEntries,
+  updateProfileAvatar,
   updatePassword,
 } from './auth.js';
 
@@ -154,6 +155,10 @@ function toast(msg) {
 const photoInput = el('<input type="file" accept="image/*" hidden>');
 document.body.appendChild(photoInput);
 photoInput.addEventListener('change', onPhoto);
+
+const avatarInput = el('<input type="file" accept="image/*" hidden>');
+document.body.appendChild(avatarInput);
+avatarInput.addEventListener('change', onAvatarPhoto);
 
 // Where does today's color actually live in the painting? Computed from the real
 // image as the densest concentration of the color (not the cluster centroid), so
@@ -344,6 +349,10 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
   const now = new Date();
   const monthRecap = recap(entries, now.getFullYear(), now.getMonth());
   const recent = entries.slice(0, 4);
+  const avatarUrl = user.user_metadata?.avatar_url || '';
+  const avatarStyle = avatarUrl
+    ? `background-image:url('${esc(avatarUrl)}');border-color:${esc(recent[0]?.colorHex || todayColor.hex)}`
+    : `background:${esc(recent[0]?.colorHex || todayColor.hex)}`;
   const memorySwatches = recent.length
     ? recent.map((entry) => ({ colorHex: entry.colorHex, photo: entry.photo }))
     : [todayColor.hex, '#5f98c7', '#af7648', '#7e8f6b'].map((colorHex) => ({ colorHex }));
@@ -352,7 +361,7 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
   app.innerHTML = `
     <h1 class="page-title">Profile</h1>
     <section class="profile-account">
-      <div class="profile-avatar" style="background:${esc(recent[0]?.colorHex || todayColor.hex)}"></div>
+      <button class="profile-avatar" id="avatarButton" type="button" aria-label="Change profile picture" style="${avatarStyle}"></button>
       <div class="profile-account-copy">
         <div class="profile-label">Signed in</div>
         <div class="profile-email">${esc(user.email || 'Signed in')}</div>
@@ -393,6 +402,7 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
       toast(err.message || 'Could not sign out.');
     }
   });
+  app.querySelector('#avatarButton').addEventListener('click', () => avatarInput.click());
   wireNav();
 }
 
@@ -805,6 +815,23 @@ async function onPhoto(e) {
   } catch (err) {
     console.error(err);
     alert('Could not read that image. Try another photo.');
+  }
+}
+
+async function onAvatarPhoto(e) {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const avatarUrl = makeThumb(bitmap, 180);
+    bitmap.close?.();
+    await updateProfileAvatar(avatarUrl);
+    toast('Profile picture updated.');
+    renderProfile();
+  } catch (err) {
+    console.error(err);
+    toast(err.message || 'Could not update profile picture.');
   }
 }
 

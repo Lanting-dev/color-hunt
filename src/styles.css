@@ -539,8 +539,29 @@ body {
   border-radius: 999px;
 }
 .profile-avatar {
+  position: relative;
   width: 54px;
   height: 54px;
+  border: 1px solid transparent;
+  background-position: center;
+  background-size: cover;
+  cursor: pointer;
+  padding: 0;
+}
+.profile-avatar::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: var(--accent);
+}
+.profile-avatar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 .profile-account-copy {
   display: flex;
