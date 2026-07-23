@@ -574,7 +574,7 @@ function recap(entries, year, month) {
 function collectionSwitcher(active) {
   const tab = (view, label) =>
     `<button class="seg${view === active ? ' active' : ''}" data-view="${view}">${label}</button>`;
-  return `<div class="view-switcher">${tab('calendar', 'Calendar')}${tab('year', 'Year')}</div>`;
+  return `<div class="view-switcher">${tab('calendar', 'Month')}${tab('year', 'Year')}</div>`;
 }
 
 function wireCollectionSwitcher() {
