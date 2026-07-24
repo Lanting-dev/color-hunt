@@ -3,7 +3,15 @@ import { pickDaily, dateFromDayNumber } from './daily.js';
 import { rgbToLab } from './color/convert.js';
 import { labPixelsFromFile } from './color/extract.js';
 import { scoreColor } from './color/score.js';
-import { getEntry, saveEntry, clearEntry, allEntries, mergeEntries } from './state.js';
+import {
+  getEntry,
+  saveEntry,
+  clearEntry,
+  allEntries,
+  mergeEntries,
+  getProfileAvatar,
+  saveProfileAvatar,
+} from './state.js';
 import { scoreBucket, track } from './analytics.js';
 import {
   authConfigured,
@@ -15,7 +23,6 @@ import {
   signInWithEmail,
   signOut,
   syncEntries,
-  updateProfileAvatar,
   updatePassword,
 } from './auth.js';
 
@@ -349,7 +356,8 @@ function renderProfileSignedIn(user, entries, stats, syncMessage) {
   const now = new Date();
   const monthRecap = recap(entries, now.getFullYear(), now.getMonth());
   const recent = entries.slice(0, 4);
-  const avatarUrl = user.user_metadata?.avatar_url || '';
+  const profileKey = user.id || user.email || 'local';
+  const avatarUrl = getProfileAvatar(profileKey);
   const avatarStyle = avatarUrl
     ? `background-image:url('${esc(avatarUrl)}');border-color:${esc(recent[0]?.colorHex || todayColor.hex)}`
     : `background:${esc(recent[0]?.colorHex || todayColor.hex)}`;
@@ -826,7 +834,8 @@ async function onAvatarPhoto(e) {
     const bitmap = await createImageBitmap(file);
     const avatarUrl = makeThumb(bitmap, 180);
     bitmap.close?.();
-    await updateProfileAvatar(avatarUrl);
+    const session = await getSession();
+    saveProfileAvatar(session?.user?.id || session?.user?.email || 'local', avatarUrl);
     toast('Profile picture updated.');
     renderProfile();
   } catch (err) {

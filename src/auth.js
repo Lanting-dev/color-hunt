@@ -57,14 +57,6 @@ export async function updatePassword(password) {
   if (error) throw error;
 }
 
-export async function updateProfileAvatar(avatarUrl) {
-  if (!supabase) throw new Error('Supabase is not configured.');
-  const { error } = await supabase.auth.updateUser({
-    data: { avatar_url: avatarUrl },
-  });
-  if (error) throw error;
-}
-
 export async function signOut() {
   if (!supabase) return;
   const { error } = await supabase.auth.signOut();

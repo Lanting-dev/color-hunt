@@ -4,9 +4,10 @@ const KEY = 'colorhunt.v1';
 
 function load() {
   try {
-    return JSON.parse(localStorage.getItem(KEY)) || { entries: {} };
+    const state = JSON.parse(localStorage.getItem(KEY)) || {};
+    return { entries: {}, profile: {}, ...state };
   } catch {
-    return { entries: {} };
+    return { entries: {}, profile: {} };
   }
 }
 
@@ -48,4 +49,18 @@ export function allEntries() {
   return Object.entries(s.entries)
     .map(([day, e]) => ({ day: +day, ...e }))
     .sort((a, b) => b.day - a.day);
+}
+
+export function getProfileAvatar(userKey = 'local') {
+  return load().profile?.avatars?.[userKey] || '';
+}
+
+export function saveProfileAvatar(userKey = 'local', avatar) {
+  const s = load();
+  const profile = s.profile || {};
+  s.profile = {
+    ...profile,
+    avatars: { ...(profile.avatars || {}), [userKey]: avatar },
+  };
+  save(s);
 }
