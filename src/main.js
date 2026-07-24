@@ -237,7 +237,7 @@ function renderYour(photoUrl, score = null, saved = false) {
   app.className = 'screen-your';
   app.innerHTML = '';
   const hasScore = Number.isFinite(score);
-  const primaryLabel = saved ? 'See it in your collection' : 'Sign in';
+  const primaryLabel = saved ? 'See it in your collection' : 'Sign in to see your collection';
   const wrap = el(`<div style="display:contents"></div>`);
   wrap.innerHTML = `
     <div class="title"><div class="date">${dateStr}</div><h1>Your Color</h1></div>
