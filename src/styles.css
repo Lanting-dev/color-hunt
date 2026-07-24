@@ -882,5 +882,9 @@ body {
    evenly and still fit 390×844; the photo just crops a little via cover. */
 #app.screen-your { gap: 28px; }
 #app.screen-your .card { aspect-ratio: auto; height: min(346px, 42vh); }
+#app.screen-your .your-card .source-art { opacity: 0; transform: none; }
+#app.screen-your .your-card.source-shown .your-photo { opacity: 0; }
+#app.screen-your .your-card.source-shown .source-art { opacity: 1; transform: none; }
+#app.screen-your .your-card.source-shown .strip { opacity: 0; pointer-events: none; }
 /* extra breathing room under the read, dropping the buttons lower */
 #app.screen-your .actions { margin-top: 24px; }

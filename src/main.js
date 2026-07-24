@@ -240,8 +240,10 @@ function renderYour(photoUrl, score = null) {
   const wrap = el(`<div style="display:contents"></div>`);
   wrap.innerHTML = `
     <div class="title"><div class="date">${dateStr}</div><h1>Your Color</h1></div>
-    <div class="card">
-      <div class="art" style="opacity:1;background-image:url('${photoUrl}')"></div>
+    <div class="card your-card" id="yourCard">
+      <div class="art your-photo" style="opacity:1;background-image:url('${photoUrl}')"></div>
+      <div class="art source-art" style="background-image:url('${imgSrc}')"></div>
+      <div class="pill" id="yourPill">Tap to see its source</div>
       <div class="strip" style="background:${todayColor.hex}">
         <div class="vals" style="color:var(--ink)">HEX ${todayColor.hex.toUpperCase()}<br>RGB ${r}, ${g}, ${b}</div>
       </div>
@@ -255,17 +257,24 @@ function renderYour(photoUrl, score = null) {
       <button class="btn btn-primary" id="toCollection">See it in your collection</button>
       <button class="btn btn-ghost" id="retry">Try another</button>
     </div>
-    ${artCard(active)}
     ${nav()}
   `;
   app.append(...wrap.childNodes);
+  const yourCard = app.querySelector('#yourCard');
+  const yourPill = app.querySelector('#yourPill');
+  let sourceShown = false;
+  yourCard.addEventListener('click', () => {
+    sourceShown = !sourceShown;
+    yourCard.classList.toggle('source-shown', sourceShown);
+    yourPill.textContent = sourceShown ? 'Back to your photo' : 'Tap to see its source';
+    if (sourceShown) track('source_revealed', baseAnalyticsProps);
+  });
   app.querySelector('#retry').addEventListener('click', () => photoInput.click());
   app.querySelector('#toCollection').addEventListener('click', () => renderCollection());
   app.querySelector('#restart').addEventListener('click', () => {
     clearEntry(day);      // forget today's find so the full flow can run again
     renderHome();
   });
-  wireArtCard();
   wireNav();
 }
 
