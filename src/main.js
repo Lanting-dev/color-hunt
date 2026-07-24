@@ -233,10 +233,11 @@ function renderHome() {
 
 // ---- screen: YOUR COLOR -----------------------------------------------------
 // score stays internal for analytics; Your Color shows only a qualitative read.
-function renderYour(photoUrl, score = null) {
+function renderYour(photoUrl, score = null, saved = false) {
   app.className = 'screen-your';
   app.innerHTML = '';
   const hasScore = Number.isFinite(score);
+  const primaryLabel = saved ? 'See it in your collection' : 'Sign in';
   const wrap = el(`<div style="display:contents"></div>`);
   wrap.innerHTML = `
     <div class="title"><div class="date">${dateStr}</div><h1>Your Color</h1></div>
@@ -253,7 +254,7 @@ function renderYour(photoUrl, score = null) {
       <div class="vibe-copy">${vibeCaption(score)}</div>
     </div>` : ''}
     <div class="actions">
-      <button class="btn btn-primary" id="toCollection">See it in your collection</button>
+      <button class="btn btn-primary" id="primaryAction">${esc(primaryLabel)}</button>
       <button class="btn btn-ghost" id="retry">Try another</button>
     </div>
     ${nav()}
@@ -269,7 +270,10 @@ function renderYour(photoUrl, score = null) {
     if (sourceShown) track('source_revealed', baseAnalyticsProps);
   });
   app.querySelector('#retry').addEventListener('click', () => photoInput.click());
-  app.querySelector('#toCollection').addEventListener('click', () => renderCollection());
+  app.querySelector('#primaryAction').addEventListener('click', () => {
+    if (saved) renderCollection();
+    else renderProfile();
+  });
   wireNav();
 }
 
@@ -818,14 +822,18 @@ async function onPhoto(e) {
     } catch (err) {
       console.warn('Scoring failed; saving the find anyway.', err);
     }
-    // every find is saved regardless of the score (penalty-free, PRD §5)
-    saveEntry(day, { photo: url, colorHex: todayColor.hex, paintingId: active.id, score, ts: Date.now() });
-    syncEntries(allEntries()).catch((err) => console.warn('Background sync failed.', err));
+    const session = authConfigured ? await getSession().catch(() => null) : null;
+    const saved = Boolean(session?.user);
+    // signed-in finds are saved regardless of score; signed-out captures stay temporary.
+    if (saved) {
+      saveEntry(day, { photo: url, colorHex: todayColor.hex, paintingId: active.id, score, ts: Date.now() });
+      syncEntries(allEntries()).catch((err) => console.warn('Background sync failed.', err));
+    }
     track('photo_uploaded', baseAnalyticsProps);
     if (Number.isFinite(score)) {
       track('match_scored', { ...baseAnalyticsProps, score_bucket: scoreBucket(score) });
     }
-    renderYour(url, score, true);
+    renderYour(url, score, saved);
   } catch (err) {
     console.error(err);
     alert('Could not read that image. Try another photo.');
