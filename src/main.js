@@ -273,14 +273,9 @@ function renderYour(photoUrl, score = null) {
   wireNav();
 }
 
-// today's screen: the chip until a photo is found, then Your Color.
+// Home is always today's prompt. Saved finds live in Collection, not the landing tab.
 function showToday() {
-  const s = getEntry(day);
-  if (s && s.photo && s.paintingId === active.id) {
-    renderYour(s.photo, Number.isFinite(s.score) ? s.score : null, false);
-  } else {
-    renderHome();
-  }
+  renderHome();
 }
 
 function profileStats(entries) {
