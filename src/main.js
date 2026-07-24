@@ -27,6 +27,22 @@ import {
 } from './auth.js';
 
 const app = document.getElementById('app');
+const sessionFinds = {};
+
+function sessionEntries() {
+  return Object.entries(sessionFinds)
+    .map(([entryDay, entry]) => ({ day: +entryDay, ...entry }))
+    .sort((a, b) => b.day - a.day);
+}
+
+function savedAndSessionEntries() {
+  const merged = {};
+  for (const entry of allEntries()) merged[entry.day] = entry;
+  for (const entry of sessionEntries()) merged[entry.day] = { ...(merged[entry.day] || {}), ...entry };
+  return Object.values(merged)
+    .filter((entry) => entry.photo && entry.day != null)
+    .sort((a, b) => b.day - a.day);
+}
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
@@ -318,7 +334,7 @@ function renderProfileSkeleton() {
 
 async function renderProfile() {
   renderProfileSkeleton();
-  let entries = allEntries().filter((entry) => entry.photo && entry.day != null);
+  let entries = savedAndSessionEntries();
 
   let session = null;
   let syncMessage = authConfigured
@@ -331,7 +347,7 @@ async function renderProfile() {
         const cloudEntries = await fetchEntries();
         if (cloudEntries.length) {
           mergeEntries(cloudEntries);
-          entries = allEntries().filter((entry) => entry.photo && entry.day != null);
+          entries = savedAndSessionEntries();
         }
         const result = await syncEntries(entries);
         syncMessage = result.count > 0
@@ -669,7 +685,7 @@ function renderYearCollection(entries, year) {
 
 function renderCollection(opts = {}) {
   collectionView = opts.view || collectionView || 'calendar';
-  const entries = opts.entries || allEntries().filter((e) => e.photo && e.day != null);
+  const entries = opts.entries || savedAndSessionEntries();
   const now = new Date();
   const year = opts.year ?? calView?.year ?? now.getFullYear();
 
@@ -824,9 +840,12 @@ async function onPhoto(e) {
     const session = authConfigured ? await getSession().catch(() => null) : null;
     const saved = Boolean(session?.user);
     // signed-in finds are saved regardless of score; signed-out captures stay temporary.
+    const entry = { photo: url, colorHex: todayColor.hex, paintingId: active.id, score, ts: Date.now() };
     if (saved) {
-      saveEntry(day, { photo: url, colorHex: todayColor.hex, paintingId: active.id, score, ts: Date.now() });
-      syncEntries(allEntries()).catch((err) => console.warn('Background sync failed.', err));
+      saveEntry(day, entry);
+      syncEntries(savedAndSessionEntries()).catch((err) => console.warn('Background sync failed.', err));
+    } else {
+      sessionFinds[day] = entry;
     }
     track('photo_uploaded', baseAnalyticsProps);
     if (Number.isFinite(score)) {
