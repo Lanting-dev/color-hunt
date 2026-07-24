@@ -250,12 +250,12 @@ function renderYour(photoUrl, score = null) {
     <div class="vibe">
       <div class="vibe-copy">${vibeCaption(score)}</div>
     </div>` : ''}
-    ${artCard(active)}
     <button class="restart" id="restart">↺ Start over</button>
     <div class="actions">
       <button class="btn btn-primary" id="toCollection">See it in your collection</button>
       <button class="btn btn-ghost" id="retry">Try another</button>
     </div>
+    ${artCard(active)}
     ${nav()}
   `;
   app.append(...wrap.childNodes);
