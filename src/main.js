@@ -250,6 +250,7 @@ function renderYour(photoUrl, score = null) {
     <div class="vibe">
       <div class="vibe-copy">${vibeCaption(score)}</div>
     </div>` : ''}
+    ${artCard(active)}
     <button class="restart" id="restart">↺ Start over</button>
     <div class="actions">
       <button class="btn btn-primary" id="toCollection">See it in your collection</button>
@@ -264,6 +265,7 @@ function renderYour(photoUrl, score = null) {
     clearEntry(day);      // forget today's find so the full flow can run again
     renderHome();
   });
+  wireArtCard();
   wireNav();
 }
 
@@ -759,6 +761,16 @@ function artCard(p) {
     </div>`;
 }
 
+function wireArtCard() {
+  const more = app.querySelector('.art-more');
+  if (!more) return;
+  more.addEventListener('click', () => {
+    const url = more.closest('.artcard')?.dataset.url;
+    if (url) window.open(url, '_blank', 'noopener');
+    else toast('More details coming soon');
+  });
+}
+
 // ---- screen: DAY DETAIL (tap a found day), re-opens that day's Your Color ---
 function renderDayDetail(entry) {
   app.className = 'screen-your';
@@ -786,12 +798,7 @@ function renderDayDetail(entry) {
   `;
   app.append(...wrap.childNodes);
   app.querySelector('#back').addEventListener('click', () => renderCollection());
-  const more = app.querySelector('.art-more');
-  if (more) more.addEventListener('click', () => {
-    const url = more.closest('.artcard')?.dataset.url;
-    if (url) window.open(url, '_blank', 'noopener');
-    else toast('More details coming soon');
-  });
+  wireArtCard();
   wireNav();
 }
 
