@@ -434,23 +434,6 @@ body {
 }
 .back:active { color: var(--ink); }
 
-/* ---------- start over (Your Color) ---------- */
-.restart {
-  position: absolute;
-  top: calc(14px + env(safe-area-inset-top));
-  right: 20px;
-  z-index: 5;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 6px 4px;
-}
-.restart:active { color: var(--ink); }
-
 /* ---------- toast ---------- */
 .toast {
   position: fixed;

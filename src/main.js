@@ -252,7 +252,6 @@ function renderYour(photoUrl, score = null) {
     <div class="vibe">
       <div class="vibe-copy">${vibeCaption(score)}</div>
     </div>` : ''}
-    <button class="restart" id="restart">↺ Start over</button>
     <div class="actions">
       <button class="btn btn-primary" id="toCollection">See it in your collection</button>
       <button class="btn btn-ghost" id="retry">Try another</button>
@@ -271,10 +270,6 @@ function renderYour(photoUrl, score = null) {
   });
   app.querySelector('#retry').addEventListener('click', () => photoInput.click());
   app.querySelector('#toCollection').addEventListener('click', () => renderCollection());
-  app.querySelector('#restart').addEventListener('click', () => {
-    clearEntry(day);      // forget today's find so the full flow can run again
-    renderHome();
-  });
   wireNav();
 }
 
